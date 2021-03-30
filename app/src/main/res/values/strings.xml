@@ -1,3 +1,4 @@
 <resources>
+    <string name="KeyPax">KeyPax</string>
     <string name="app_name">app</string>
 </resources>

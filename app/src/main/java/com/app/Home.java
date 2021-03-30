@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.content.Intent;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,7 +19,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class Home extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,5 +51,10 @@ public class MainActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
 
 
+    }
+
+    public void signUpActivity(View view) {
+        Intent i = new Intent(this,SignUp.class);
+        startActivity(i);
     }
 }
