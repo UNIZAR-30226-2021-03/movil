@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="Sign up"
         android:textSize="30dp"
-        android:layout_marginVertical="200dp"
+        android:layout_marginVertical="180dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/buttons" />
 
@@ -42,8 +42,7 @@
                 android:id="@+id/apodo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="numberSigned" />
+                android:layout_weight="1" />
 
         </LinearLayout>
         <LinearLayout android:orientation="horizontal"
@@ -107,7 +106,8 @@
             android:backgroundTint="@color/buttons"
             android:layout_marginLeft="280dp"
             android:text="ENVIAR"
-            android:textColor="@color/background"/>
+            android:textColor="@color/background"
+            android:onClick="onButtonShowPopupWindowClick"/>
     </LinearLayout>
     </LinearLayout>
     <RelativeLayout
@@ -125,7 +125,7 @@
             android:text="CONTACT US"
             android:textColor="@color/background" />
         <TextView
-            android:id="@+id/mail"
+            android:id="@+id/mail2"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:text="barbarosoft@gmail.com\nEINA Unizar"
