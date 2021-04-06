@@ -11,20 +11,20 @@ import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SignUp extends AppCompatActivity {
+public class LogIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_log_in);
     }
 
-    public void onButtonShowPopupWindowClick(View view) {
+    public void onButtonShowPopupWindow(View view) {
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_verification, null);
+        View popupView = inflater.inflate(R.layout.popup_2fa, null);
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -37,6 +37,7 @@ public class SignUp extends AppCompatActivity {
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
         // dismiss the popup window when touched
+
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -45,4 +46,5 @@ public class SignUp extends AppCompatActivity {
             }
         });
     }
+
 }

@@ -57,4 +57,9 @@ public class Home extends AppCompatActivity {
         Intent i = new Intent(this,SignUp.class);
         startActivity(i);
     }
+
+    public void logInActivity(View view) {
+        Intent i = new Intent(this,LogIn.class);
+        startActivity(i);
+    }
 }

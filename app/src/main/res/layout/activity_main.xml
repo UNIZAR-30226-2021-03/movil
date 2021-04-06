@@ -48,7 +48,8 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/background"
         android:text="Log in"
-        android:textColor="@color/buttons"/>
+        android:textColor="@color/buttons"
+        android:onClick="logInActivity"/>
     </LinearLayout>
     </LinearLayout>
 
