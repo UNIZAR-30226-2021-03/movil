@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -25,39 +26,32 @@ import services.SignUpServices;
 
 public class SignUp extends AppCompatActivity {
 
+    private EditText apodo;
+    private EditText mail;
+    private EditText password;
+    private EditText confirmPassword;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://keypax-api.sytes.net/public/signup";
-
-        // Request a string response from the provided URL.
-        // TODO CHANGE TO JsonObjectRequest
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.println(Log.INFO,"a",response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-
-                    }
-                });
-
-        // Add the request to the RequestQueue.
-        queue.add(jsonObjectRequest);
+        apodo = findViewById(R.id.apodo);
+        mail = findViewById(R.id.mail);
+        password = findViewById(R.id.password);
+        confirmPassword = findViewById(R.id.confirmPassword);
     }
 
     public void onButtonShowPopupWindowClick(View view) {
 
-        SignUpServices.signUp("laborquinia@gmail.com","Borque","Borque1", this);
+        //SignUpServices.signUp("cbellvis99@gmail.com","Borque","Borque1", this);
+
+        String auxApodo = apodo.getText().toString();
+        String auxMail = mail.getText().toString();
+        String auxPassword = password.getText().toString();
+
+        SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)

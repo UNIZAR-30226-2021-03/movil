@@ -83,7 +83,7 @@
                 android:text="Confirmar contraseña"
                 android:textColor="@color/buttons"/>
             <EditText
-                android:id="@+id/confirm"
+                android:id="@+id/confirmPassword"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />

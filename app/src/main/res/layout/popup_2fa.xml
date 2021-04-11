@@ -51,8 +51,7 @@
             android:backgroundTint="@color/buttons"
             android:layout_gravity="center_horizontal"
             android:text="ENVIAR"
-            android:textColor="@color/background"
-            android:onClick="comprobarCodigo"/>
+            android:textColor="@color/background" />
     </LinearLayout>
 
 

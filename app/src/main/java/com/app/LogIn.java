@@ -6,20 +6,37 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import services.LogInServices;
+import services.SignUpServices;
+
 public class LogIn extends AppCompatActivity {
+
+    private EditText mail;
+    private EditText password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+
+        mail = findViewById(R.id.mail);
+        password = findViewById(R.id.password);
     }
 
     public void onButtonShowPopupWindow(View view) {
+
+        //LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
+
+        String auxMail = mail.getText().toString();
+        String auxPassword = password.getText().toString();
+
+        LogInServices.logIn(auxPassword, auxMail, this);
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
