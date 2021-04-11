@@ -27,7 +27,7 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://keypax-api.hopto.org/";
+        String url ="https://keypax-api.sytes.net/public";
 
         // Request a string response from the provided URL.
         // TODO CHANGE TO JsonObjectRequest
