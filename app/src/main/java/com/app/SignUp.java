@@ -52,6 +52,7 @@ public class SignUp extends AppCompatActivity {
         String auxPassword = password.getText().toString();
         String auxConfirmPassword = confirmPassword.getText().toString();
 
+
         if(auxPassword == auxConfirmPassword){
             SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
         }
