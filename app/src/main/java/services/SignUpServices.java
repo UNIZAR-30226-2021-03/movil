@@ -37,7 +37,7 @@ public class SignUpServices {
         requestQueue.add(request);
     }
 
-    static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+   static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
@@ -53,6 +53,8 @@ public class SignUpServices {
 
         }
     };
+
+
 
         // Enter the correct url for your api service site
         /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Routes.rutaSignUp, body,

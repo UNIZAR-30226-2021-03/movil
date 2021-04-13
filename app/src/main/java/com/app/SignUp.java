@@ -50,8 +50,16 @@ public class SignUp extends AppCompatActivity {
         String auxApodo = apodo.getText().toString();
         String auxMail = mail.getText().toString();
         String auxPassword = password.getText().toString();
+        String auxConfirmPassword = confirmPassword.getText().toString();
 
-        SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
+        if(auxPassword == auxConfirmPassword){
+            SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
+        }
+        else{
+
+        }
+
+
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
