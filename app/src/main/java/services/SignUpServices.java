@@ -2,6 +2,7 @@ package services;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -16,7 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SignUpServices {
-    public static void signUp(String email, String nickname, String password, Context context){
+    static int errorCode;
+    public static int signUp(String email, String nickname, String password, Context context){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
@@ -36,12 +38,16 @@ public class SignUpServices {
                 errorListener);
 
         requestQueue.add(request);
+
+        return errorCode;
     }
 
    static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
+
+            errorCode = 1;
         }
     };
 
@@ -50,6 +56,8 @@ public class SignUpServices {
         public void onErrorResponse(VolleyError error) {
             if (error.networkResponse != null) {
                 Log.d("Error","Error Response code: " + error.networkResponse.statusCode);
+
+                errorCode = error.networkResponse.statusCode;
             }
 
         }

@@ -26,12 +26,12 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(this);
         String url ="https://keypax-api.sytes.net/public";
 
         // Request a string response from the provided URL.
         // TODO CHANGE TO JsonObjectRequest
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+        /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                     @Override
