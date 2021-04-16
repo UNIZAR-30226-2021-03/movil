@@ -64,6 +64,73 @@ public class SignUpServices {
     };
 
 
+    //POSIBLE SOLUCION ASINCORONA
+    /*public class SignUpServices extends AsyncTask<String,Integer,String> {
+        static int errorCode;
+        private ProgressDialog dialog = new ProgressDialog(SignUpServices.this);
+
+        public static int signUp(String email, String nickname, String password, Context context){
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            JSONObject body = new JSONObject();
+            try {
+                //input your API parameters
+                body.put("email",email);
+                body.put("nickname",nickname);
+                body.put("password",password);
+
+            } catch (JSONException e) {
+
+            }
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.POST,
+                    Routes.rutaSignUp,
+                    body,
+                    listener,
+                    errorListener);
+
+            requestQueue.add(request);
+            return errorCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            dialog.setMessage("Cargando");
+            dialog.show();
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("Response","Success Response: " + response.toString());
+
+                    errorCode = 1;
+                }
+            };
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse != null) {
+                        Log.d("Error","Error Response code: " + error.networkResponse.statusCode);
+
+                        errorCode = error.networkResponse.statusCode;
+                    }
+
+                }
+            };
+
+            return "process finished";
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            dialog.dismiss();
+        }*/
+
+
 
         // Enter the correct url for your api service site
         /*JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Routes.rutaSignUp, body,
