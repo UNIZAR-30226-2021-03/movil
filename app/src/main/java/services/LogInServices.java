@@ -14,7 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LogInServices {
-    public static void logIn(String email, String password, Context context){
+    static int errorCode;
+    public static int logIn(String email, String password, Context context){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
@@ -32,12 +33,16 @@ public class LogInServices {
                 errorListener);
 
         requestQueue.add(request);
+
+        return errorCode;
     }
 
     static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
+
+            errorCode = 1;
         }
     };
 
@@ -46,6 +51,8 @@ public class LogInServices {
         public void onErrorResponse(VolleyError error) {
             if (error.networkResponse != null) {
                 Log.d("Error","Error Response code: " + error.networkResponse.statusCode);
+
+                errorCode = error.networkResponse.statusCode;
             }
         }
     };

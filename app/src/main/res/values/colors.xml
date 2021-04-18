@@ -5,6 +5,7 @@
     <color name="header">#057DCD</color>
     <color name="textColor">#43B0F1</color>
     <color name="error">#FE0000</color>
+    <color name="newCategory">#FFDF00</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

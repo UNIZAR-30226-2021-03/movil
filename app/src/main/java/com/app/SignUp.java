@@ -32,7 +32,7 @@ public class SignUp extends AppCompatActivity {
     private EditText password;
     private EditText confirmPassword;
     private TextView errorConfirm;
-    int statusCode;
+    private int statusCode;
 
 
     @Override
@@ -63,19 +63,19 @@ public class SignUp extends AppCompatActivity {
             statusCode = SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
 
             if(statusCode == 400){
-                errorConfirm.setText("No se cumplen los requisitos");
+                errorConfirm.setText("*No se cumplen los requisitos");
                 errorConfirm.setVisibility(View.VISIBLE);
             }
             else if(statusCode == 409){
-                errorConfirm.setText("Ya ese existe un usuario con este email");
+                errorConfirm.setText("*Ya ese existe un usuario con este email");
                 errorConfirm.setVisibility(View.VISIBLE);
             }
             else if(statusCode == 501){
-                errorConfirm.setText("No se puede enviar el email de verificación");
+                errorConfirm.setText("*No se puede enviar el email de verificación");
                 errorConfirm.setVisibility(View.VISIBLE);
             }
             else if(statusCode == 500){
-                errorConfirm.setText("Server error");
+                errorConfirm.setText("*Server error");
                 errorConfirm.setVisibility(View.VISIBLE);
             }
             else{

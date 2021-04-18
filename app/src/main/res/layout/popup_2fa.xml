@@ -26,6 +26,7 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:id="@+id/fa"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="30dp"
@@ -40,9 +41,23 @@
             android:layout_gravity="center"
             android:text="Se ha enviado al correo:\nexample@gmail.com"
             android:textColor="@color/buttons"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:layout_gravity="right">
+            <TextView
+                android:id="@+id/IncorretCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/error"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="30dp"/>
 
         <Button
             android:id="@+id/button"
@@ -51,6 +66,7 @@
             android:backgroundTint="@color/buttons"
             android:layout_gravity="center_horizontal"
             android:text="ENVIAR"
+            android:onClick="checkCode"
             android:textColor="@color/background" />
     </LinearLayout>
 

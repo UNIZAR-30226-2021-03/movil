@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,10 @@ public class LogIn extends AppCompatActivity {
 
     private EditText mail;
     private EditText password;
+    private EditText faCode;
+    private int statusCode;
+    private TextView errorConfirm;
+    private TextView errorCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +32,40 @@ public class LogIn extends AppCompatActivity {
 
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
+        errorConfirm = findViewById(R.id.confirmIncorrect);
     }
 
     public void onButtonShowPopupWindow(View view) {
+
+        errorConfirm.setVisibility(View.GONE);
 
         //LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
 
         String auxMail = mail.getText().toString();
         String auxPassword = password.getText().toString();
 
-        LogInServices.logIn(auxPassword, auxMail, this);
+        statusCode = LogInServices.logIn(auxPassword, auxMail, this);
+
+        if(statusCode == 400){
+            errorConfirm.setText("*No se cumplen los requisitos");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
+        else if(statusCode == 401){
+            errorConfirm.setText("*Contraseña incorrecta");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
+        else if(statusCode == 404){
+            errorConfirm.setText("*El usuario no existe");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
+        else if(statusCode == 501){
+            errorConfirm.setText("*No se puede enviar el email de verificación");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
+        else if(statusCode == 500){
+            errorConfirm.setText("*Server error");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
 
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
@@ -56,10 +85,16 @@ public class LogIn extends AppCompatActivity {
         // dismiss the popup window when touched
 
         popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
+            public void checkCode(){
+                faCode = findViewById(R.id.fa);
+                errorCode = findViewById(R.id.IncorretCode);
+                if (fa == ){
+                    popupWindow.dismiss();
+                }
+                else{
+                    errorCode.setText("*Codigo incorrecto");
+                    errorCode.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
