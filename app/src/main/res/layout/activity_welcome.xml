@@ -25,7 +25,6 @@
     </LinearLayout>
 
 
-
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="fill_parent"

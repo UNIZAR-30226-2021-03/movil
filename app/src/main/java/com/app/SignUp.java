@@ -99,6 +99,7 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         popupWindow.dismiss();
+                        setContentView(R.layout.activity_log_in);
                         return true;
                     }
                 });

@@ -15,15 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import services.LogInServices;
 import services.SignUpServices;
+import services.TokenServices;
 
 public class LogIn extends AppCompatActivity {
 
     private EditText mail;
     private EditText password;
     private EditText faCode;
-    private int statusCode;
+    private String statusCode;
+    private String statusCodeToken;
+    private String tokenCode;
     private TextView errorConfirm;
     private TextView errorCode;
+    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,57 +50,59 @@ public class LogIn extends AppCompatActivity {
 
         statusCode = LogInServices.logIn(auxPassword, auxMail, this);
 
-        if(statusCode == 400){
+        if(statusCode == "400"){
             errorConfirm.setText("*No se cumplen los requisitos");
             errorConfirm.setVisibility(View.VISIBLE);
         }
-        else if(statusCode == 401){
+        else if(statusCode == "401"){
             errorConfirm.setText("*Contraseña incorrecta");
             errorConfirm.setVisibility(View.VISIBLE);
         }
-        else if(statusCode == 404){
+        else if(statusCode == "404"){
             errorConfirm.setText("*El usuario no existe");
             errorConfirm.setVisibility(View.VISIBLE);
         }
-        else if(statusCode == 501){
+        else if(statusCode == "501"){
             errorConfirm.setText("*No se puede enviar el email de verificación");
             errorConfirm.setVisibility(View.VISIBLE);
         }
-        else if(statusCode == 500){
+        else if(statusCode =="500"){
             errorConfirm.setText("*Server error");
             errorConfirm.setVisibility(View.VISIBLE);
         }
+        else {
 
-        // inflate the layout of the popup window
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_2fa, null);
+            // inflate the layout of the popup window
+            LayoutInflater inflater = (LayoutInflater)
+                    getSystemService(LAYOUT_INFLATER_SERVICE);
+            View popupView = inflater.inflate(R.layout.popup_2fa, null);
 
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+            // create the popup window
+            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            boolean focusable = true; // lets taps outside the popup also dismiss it
+            popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            // show the popup window
+            // which view you pass in doesn't matter, it is only used for the window tolken
+            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        // dismiss the popup window when touched
+        }
+    }
 
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            public void checkCode(){
-                faCode = findViewById(R.id.fa);
-                errorCode = findViewById(R.id.IncorretCode);
-                if (fa == ){
-                    popupWindow.dismiss();
-                }
-                else{
-                    errorCode.setText("*Codigo incorrecto");
-                    errorCode.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+    public void checkCode(){
+        faCode = findViewById(R.id.fa);
+        String code = faCode.getText().toString();
+        errorCode = findViewById(R.id.IncorretCode);
+        tokenCode = TokenServices.checkToken(statusCode, code, this);
+        if (tokenCode == "401") {
+            errorCode.setText("*Codigo incorrecto");
+            errorCode.setVisibility(View.VISIBLE);
+        } else {
+            popupWindow.dismiss();
+            //IR A PANTALLA WELCOME
+            setContentView(R.layout.activity_welcome);
+        }
     }
 
 }

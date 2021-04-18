@@ -2,6 +2,8 @@ package services;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,28 +15,28 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LogInServices {
-    static String token;
-    public static String logIn(String email, String password, Context context){
+public class TokenServices {
+    static String accessToken;
+    public static String checkToken(String token, String code, Context context){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
             //input your API parameters
-            body.put("email",email);
-            body.put("password",password);
+            body.put("_2faToken",token);
+            body.put("code",code);
         } catch (JSONException e) {
 
         }
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                Routes.rutaLogIn,
+                Routes.rutaToken,
                 body,
                 listener,
                 errorListener);
 
         requestQueue.add(request);
 
-        return token;
+        return accessToken;
     }
 
     static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
@@ -42,10 +44,11 @@ public class LogInServices {
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
             try {
-                token = response.getString("_2faToken");
+                accessToken = response.getString("accessToken");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
         }
     };
 
@@ -55,7 +58,7 @@ public class LogInServices {
             if (error.networkResponse != null) {
                 Log.d("Error","Error Response code: " + error.networkResponse.statusCode);
 
-                token = String.valueOf(error.networkResponse.statusCode);
+                accessToken = String.valueOf(error.networkResponse.statusCode);
             }
         }
     };
