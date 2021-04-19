@@ -33,6 +33,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.Home" />
         </activity>
+        <activity
+            android:name=".Welcome"
+            android:label="Bienvenido"
+            android:parentActivityName=".LogIn">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.app.Home" />
+        </activity>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

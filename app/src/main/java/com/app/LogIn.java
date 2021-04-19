@@ -2,6 +2,7 @@ package com.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,19 +37,20 @@ public class LogIn extends AppCompatActivity {
 
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
-        errorConfirm = findViewById(R.id.confirmIncorrect);
+        errorConfirm = findViewById(R.id.confirmIncorrectLog);
     }
 
     public void onButtonShowPopupWindow(View view) {
 
         errorConfirm.setVisibility(View.GONE);
 
-        //LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
+        //statusCode = LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
 
         String auxMail = mail.getText().toString();
         String auxPassword = password.getText().toString();
 
-        statusCode = LogInServices.logIn(auxPassword, auxMail, this);
+
+        statusCode = LogInServices.logIn(auxMail, auxPassword,this);
 
         if(statusCode == "400"){
             errorConfirm.setText("*No se cumplen los requisitos");
@@ -86,11 +88,18 @@ public class LogIn extends AppCompatActivity {
             // show the popup window
             // which view you pass in doesn't matter, it is only used for the window tolken
             popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            /*popupView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    popupWindow.dismiss();
+                    return true;
+                }
+            });*/
 
         }
     }
 
-    public void checkCode(){
+    public void checkCode(View view){
         faCode = findViewById(R.id.fa);
         String code = faCode.getText().toString();
         errorCode = findViewById(R.id.IncorretCode);

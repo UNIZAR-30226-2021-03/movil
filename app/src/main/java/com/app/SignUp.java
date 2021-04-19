@@ -44,7 +44,7 @@ public class SignUp extends AppCompatActivity {
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
-        errorConfirm = findViewById(R.id.confirmIncorrect);
+        errorConfirm = findViewById(R.id.confirmIncorrectSign);
     }
 
     public void onButtonShowPopupWindowClick(View view) {
@@ -107,7 +107,7 @@ public class SignUp extends AppCompatActivity {
 
         }
         else{
-            errorConfirm.setText("Las contraseñas no coinciden");
+            errorConfirm.setText("*Las contraseñas no coinciden");
             errorConfirm.setVisibility(View.VISIBLE);
         }
 
