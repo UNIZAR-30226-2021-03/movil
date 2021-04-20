@@ -1,8 +1,10 @@
 package services;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
+import android.os.AsyncTask;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -18,14 +20,15 @@ import org.json.JSONObject;
 
 public class SignUpServices {
     static int errorCode;
-    public static int signUp(String email, String nickname, String password, Context context){
+
+    public static int signUp(String email, String nickname, String password, Context context) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
             //input your API parameters
-            body.put("email",email);
-            body.put("nickname",nickname);
-            body.put("password",password);
+            body.put("email", email);
+            body.put("nickname", nickname);
+            body.put("password", password);
 
         } catch (JSONException e) {
 
@@ -42,7 +45,84 @@ public class SignUpServices {
         return errorCode;
     }
 
-   static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+    static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+        @Override
+        public void onResponse(JSONObject response) {
+            Log.d("Response", "Success Response: " + response.toString());
+
+            errorCode = 1;
+        }
+    };
+
+    static Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            if (error.networkResponse != null) {
+                Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+
+                errorCode = error.networkResponse.statusCode;
+            }
+
+        }
+    };
+}
+/*
+public class SignUpServices extends AsyncTask<String,Void,Integer> {
+    private Context ctx;
+    private static int errorCode;
+
+    public interface Result {
+        void processFinish(Integer errorCode);
+    }
+    public Result delegate;
+
+    public SignUpServices(Context context,  Result _delegate) {
+        ctx= context;
+        delegate=_delegate;
+    }
+
+    @Override
+    protected Integer doInBackground(String... params){
+        String email= params[0];
+        String nickname= params[0];
+        String password= params[0];
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(ctx);
+        JSONObject body = new JSONObject();
+        try {
+            //input your API parameters
+            body.put("email",email);
+            body.put("nickname",nickname);
+            body.put("password",password);
+
+        } catch (JSONException e) {}
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                Routes.rutaSignUp,
+                body,
+                listener,
+                errorListener);
+
+        requestQueue.add(request);
+        return errorCode;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+        delegate.processFinish(integer);
+    }
+
+
+    static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
@@ -62,8 +142,12 @@ public class SignUpServices {
 
         }
     };
+}
+*/
 
+/*
 
+*/
     //POSIBLE SOLUCION ASINCORONA
     /*public class SignUpServices extends AsyncTask<String,Integer,String> {
         static int errorCode;
@@ -146,5 +230,4 @@ public class SignUpServices {
             }
         });*/
         //requestQueue.add(jsonObjectRequest);
-    }
 //}

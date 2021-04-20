@@ -1,5 +1,7 @@
 package com.app;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,18 +35,21 @@ public class SignUp extends AppCompatActivity {
     private EditText confirmPassword;
     private TextView errorConfirm;
     private int statusCode;
+    private ProgressDialog dialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        dialog = new ProgressDialog(this);
 
         apodo = findViewById(R.id.apodo);
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
         errorConfirm = findViewById(R.id.confirmIncorrectSign);
+
     }
 
     public void onButtonShowPopupWindowClick(View view) {
@@ -58,9 +63,20 @@ public class SignUp extends AppCompatActivity {
         String auxPassword = password.getText().toString();
         String auxConfirmPassword = confirmPassword.getText().toString();
 
+        dialog.setMessage("Cargando");
+        dialog.show();
 
         if(auxPassword.equals(auxConfirmPassword)){
-            statusCode = SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
+          /* SignUpServices service= (SignUpServices) new SignUpServices(this,new SignUpServices.Result(){
+
+                @Override
+                public void processFinish(Integer output){
+                   statusCode=output;
+                }
+            }).execute(auxMail, auxApodo, auxPassword);
+            dialog.dismiss();*/
+            //statusCode = SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
+            System.out.println(statusCode);
 
             if(statusCode == 400){
                 errorConfirm.setText("*No se cumplen los requisitos");
