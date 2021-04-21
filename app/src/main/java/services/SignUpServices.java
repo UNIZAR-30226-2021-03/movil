@@ -18,10 +18,16 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SignUpServices {
-    static int errorCode;
 
-    public static int signUp(String email, String nickname, String password, Context context) {
+public class SignUpServices {
+    //static int errorCode;
+
+    //Interfaz Callback para recibir el código de error del backend
+    public interface VolleyCallBack {
+        void onFinish(Integer statusCode);
+    }
+
+    public static void signUp(String email, String nickname, String password, Context context, final VolleyCallBack callBack) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
@@ -29,28 +35,32 @@ public class SignUpServices {
             body.put("email", email);
             body.put("nickname", nickname);
             body.put("password", password);
-
         } catch (JSONException e) {
-
+            Log.d("JSONObject error", "Cannot create JSONObject");
         }
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
-                Routes.rutaSignUp,
-                body,
-                listener,
-                errorListener);
-
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaSignUp, body,
+                response -> {
+                    //Log.d("Response", "Success Response: " + response.toString());
+                    callBack.onFinish(1);
+                },
+                error -> {
+                    if (error.networkResponse != null) {
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        callBack.onFinish(error.networkResponse.statusCode);
+                    }
+                });
         requestQueue.add(request);
-
-        return errorCode;
+        //return errorCode;
     }
-
+}
+    /*
     static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response", "Success Response: " + response.toString());
 
             errorCode = 1;
+            callBack.onFinish()
         }
     };
 
@@ -64,12 +74,12 @@ public class SignUpServices {
             }
 
         }
-    };
-}
+    };*/
+
 /*
 public class SignUpServices extends AsyncTask<String,Void,Integer> {
     private Context ctx;
-    private static int errorCode;
+    private static Integer errorCode=99;
 
     public interface Result {
         void processFinish(Integer errorCode);
@@ -83,6 +93,7 @@ public class SignUpServices extends AsyncTask<String,Void,Integer> {
 
     @Override
     protected Integer doInBackground(String... params){
+        Log.d("doInBackground","entrar");
         String email= params[0];
         String nickname= params[0];
         String password= params[0];
@@ -105,8 +116,15 @@ public class SignUpServices extends AsyncTask<String,Void,Integer> {
                 listener,
                 errorListener);
 
-        requestQueue.add(request);
-        return errorCode;
+        return requestQueue.add(request);
+        /*
+        try {
+            //Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d("doInBackground","salir "+errorCode.toString());
+        //return errorCode;
     }
 
     @Override
@@ -118,6 +136,7 @@ public class SignUpServices extends AsyncTask<String,Void,Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         super.onPostExecute(integer);
+        Log.d("OnPostExecute","Código de respuesta: " + integer.toString());
         delegate.processFinish(integer);
     }
 
@@ -127,7 +146,6 @@ public class SignUpServices extends AsyncTask<String,Void,Integer> {
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
 
-            errorCode = 1;
         }
     };
 
@@ -228,6 +246,9 @@ public class SignUpServices extends AsyncTask<String,Void,Integer> {
             public void onErrorResponse(VolleyError error) {
                 Log.println(Log.INFO,"e",error.toString());
             }
-        });*/
+        });
         //requestQueue.add(jsonObjectRequest);
 //}
+
+
+*/

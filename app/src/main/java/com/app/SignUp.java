@@ -54,7 +54,49 @@ public class SignUp extends AppCompatActivity {
 
     public void onButtonShowPopupWindowClick(View view) {
 
-        //SignUpServices.signUp("cbellvis99@gmail.com","Borque","Borque1", this);
+        //Clase interna para evaluar la respuesta del backend
+        class ResponseHandler{
+            public void handler(Integer statusCode){
+                if (statusCode == 400) {
+                    errorConfirm.setText("*No se cumplen los requisitos");
+                    errorConfirm.setVisibility(View.VISIBLE);
+                } else if (statusCode == 409) {
+                    errorConfirm.setText("*Ya ese existe un usuario con este email");
+                    errorConfirm.setVisibility(View.VISIBLE);
+                } else if (statusCode == 501) {
+                    errorConfirm.setText("*No se puede enviar el email de verificación");
+                    errorConfirm.setVisibility(View.VISIBLE);
+                } else if (statusCode == 500) {
+                    errorConfirm.setText("*Server error");
+                    errorConfirm.setVisibility(View.VISIBLE);
+                } else {
+                    // inflate the layout of the popup window
+                    LayoutInflater inflater = (LayoutInflater)
+                            getSystemService(LAYOUT_INFLATER_SERVICE);
+                    View popupView = inflater.inflate(R.layout.popup_verification, null);
+
+                    // create the popup window
+                    int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                    int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                    boolean focusable = true; // lets taps outside the popup also dismiss it
+                    final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                    // show the popup window
+                    // which view you pass in doesn't matter, it is only used for the window tolken
+                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+                    // dismiss the popup window when touched
+                    popupView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            popupWindow.dismiss();
+                            setContentView(R.layout.activity_log_in);
+                            return true;
+                        }
+                    });
+                }
+            }
+        }
 
         errorConfirm.setVisibility(View.GONE);
 
@@ -62,71 +104,22 @@ public class SignUp extends AppCompatActivity {
         String auxMail = mail.getText().toString();
         String auxPassword = password.getText().toString();
         String auxConfirmPassword = confirmPassword.getText().toString();
-
-        dialog.setMessage("Cargando");
-        dialog.show();
+        ResponseHandler responseHandler = new ResponseHandler();
 
         if(auxPassword.equals(auxConfirmPassword)){
-          /* SignUpServices service= (SignUpServices) new SignUpServices(this,new SignUpServices.Result(){
-
-                @Override
-                public void processFinish(Integer output){
-                   statusCode=output;
-                }
-            }).execute(auxMail, auxApodo, auxPassword);
-            dialog.dismiss();*/
-            //statusCode = SignUpServices.signUp(auxMail, auxApodo, auxPassword, this);
-            System.out.println(statusCode);
-
-            if(statusCode == 400){
-                errorConfirm.setText("*No se cumplen los requisitos");
-                errorConfirm.setVisibility(View.VISIBLE);
-            }
-            else if(statusCode == 409){
-                errorConfirm.setText("*Ya ese existe un usuario con este email");
-                errorConfirm.setVisibility(View.VISIBLE);
-            }
-            else if(statusCode == 501){
-                errorConfirm.setText("*No se puede enviar el email de verificación");
-                errorConfirm.setVisibility(View.VISIBLE);
-            }
-            else if(statusCode == 500){
-                errorConfirm.setText("*Server error");
-                errorConfirm.setVisibility(View.VISIBLE);
-            }
-            else{
-                // inflate the layout of the popup window
-                LayoutInflater inflater = (LayoutInflater)
-                        getSystemService(LAYOUT_INFLATER_SERVICE);
-                View popupView = inflater.inflate(R.layout.popup_verification, null);
-
-                // create the popup window
-                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                boolean focusable = true; // lets taps outside the popup also dismiss it
-                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-                // show the popup window
-                // which view you pass in doesn't matter, it is only used for the window tolken
-                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-                // dismiss the popup window when touched
-                popupView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        popupWindow.dismiss();
-                        setContentView(R.layout.activity_log_in);
-                        return true;
-                    }
-                });
-            }
-
+            dialog.setMessage("Cargando");
+            dialog.show();
+            SignUpServices.signUp(auxMail, auxApodo, auxPassword,this,
+                    statusCode -> {
+                        /* System.out.println(statusCode); */
+                        dialog.dismiss();
+                        responseHandler.handler(statusCode);
+                    });
         }
         else{
             errorConfirm.setText("*Las contraseñas no coinciden");
             errorConfirm.setVisibility(View.VISIBLE);
         }
-
 
     }
 }
