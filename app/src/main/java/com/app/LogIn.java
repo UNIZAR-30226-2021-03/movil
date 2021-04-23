@@ -35,6 +35,7 @@ public class LogIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+        dialog = new ProgressDialog(this);
 
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
@@ -45,7 +46,7 @@ public class LogIn extends AppCompatActivity {
 
         //Clase interna para evaluar la respuesta del backend
         class ResponseHandler {
-            public void handler(Integer statusCode) {
+            public void handler(String statusCode) {
                 if (statusCode.equals("400")) {
                     errorConfirm.setText("*No se cumplen los requisitos");
                     errorConfirm.setVisibility(View.VISIBLE);
@@ -71,7 +72,7 @@ public class LogIn extends AppCompatActivity {
                     int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                     int height = LinearLayout.LayoutParams.WRAP_CONTENT;
                     boolean focusable = true; // lets taps outside the popup also dismiss it
-                    final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+                    popupWindow = new PopupWindow(popupView, width, height, focusable);
 
                     // show the popup window
                     // which view you pass in doesn't matter, it is only used for the window tolken
@@ -111,18 +112,41 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void checkCode(View view){
+        class ResponseHandler {
+            public void handler(String accesToken) {
+                if (tokenCode == "401") {
+                    errorCode.setText("*Codigo incorrecto");
+                    errorCode.setVisibility(View.VISIBLE);
+                } else {
+                    popupWindow.dismiss();
+                    //IR A PANTALLA WELCOME
+                    setContentView(R.layout.activity_welcome);
+                }
+            }
+        }
+        errorCode.setVisibility(View.GONE);
         faCode = findViewById(R.id.fa);
         String code = faCode.getText().toString();
         errorCode = findViewById(R.id.IncorretCode);
-        tokenCode = TokenServices.checkToken(statusCode, code, this);
-        if (tokenCode == "401") {
+        //tokenCode = TokenServices.checkToken(statusCode, code, this);
+        ResponseHandler responseHandler = new ResponseHandler();
+
+        dialog.setMessage("Cargando");
+        dialog.show();
+        TokenServices.checkToken(statusCode, code,this,
+                accesToken -> {
+                    /* System.out.println(statusCode); */
+                    dialog.dismiss();
+                    responseHandler.handler(accesToken);
+                });
+        /*if (tokenCode == "401") {
             errorCode.setText("*Codigo incorrecto");
             errorCode.setVisibility(View.VISIBLE);
         } else {
             popupWindow.dismiss();
             //IR A PANTALLA WELCOME
             setContentView(R.layout.activity_welcome);
-        }
+        }*/
     }
 
 }

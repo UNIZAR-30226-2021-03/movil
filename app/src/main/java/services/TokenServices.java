@@ -17,7 +17,11 @@ import org.json.JSONObject;
 
 public class TokenServices {
     static String accessToken;
-    public static String checkToken(String token, String code, Context context){
+
+    public interface VolleyCallBack {
+        void onFinish(String accessToken);
+    }
+    public static void checkToken(String token, String code, Context context, final VolleyCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         try {
@@ -25,21 +29,37 @@ public class TokenServices {
             body.put("_2faToken",token);
             body.put("code",code);
         } catch (JSONException e) {
-
+            Log.d("JSONObject error", "Cannot create JSONObject");
         }
-        JsonObjectRequest request = new JsonObjectRequest(
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaToken, body,
+                response -> {
+                    //Log.d("Response", "Success Response: " + response.toString());
+                    try {
+                        callBack.onFinish(response.getString("accessToken"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> {
+                    if (error.networkResponse != null) {
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
+                    }
+                });
+
+        /*JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 Routes.rutaToken,
                 body,
                 listener,
-                errorListener);
+                errorListener);*/
 
         requestQueue.add(request);
 
-        return accessToken;
+        //return accessToken;
     }
 
-    static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
+    /*static Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
         public void onResponse(JSONObject response) {
             Log.d("Response","Success Response: " + response.toString());
@@ -61,6 +81,7 @@ public class TokenServices {
                 accessToken = String.valueOf(error.networkResponse.statusCode);
             }
         }
-    };
+    };*/
 
 }
+

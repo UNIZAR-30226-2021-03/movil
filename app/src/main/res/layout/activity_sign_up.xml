@@ -31,7 +31,7 @@
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="20dp">
             <TextView
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
@@ -41,12 +41,14 @@
                 android:id="@+id/apodo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/shape"/>
 
         </LinearLayout>
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
             <TextView
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
@@ -56,12 +58,14 @@
                 android:id="@+id/mail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@drawable/shape"/>
 
         </LinearLayout>
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
             <TextView
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
@@ -72,24 +76,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:background="@drawable/shape"/>
 
         </LinearLayout>
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
             <TextView
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
                 android:text="Confirmar contraseña"
-                android:textColor="@color/buttons"/>
+                android:textColor="@color/buttons"
+                android:layout_marginBottom="10dp"/>
             <EditText
                 android:id="@+id/confirmPassword"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textPassword"/>
-
+                android:inputType="textPassword"
+                android:background="@drawable/shape"
+                android:layout_marginTop="5dp"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -108,7 +116,7 @@
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="40dp"/>
     <LinearLayout android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

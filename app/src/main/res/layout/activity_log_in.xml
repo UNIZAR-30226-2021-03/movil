@@ -39,18 +39,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Email Address *"/>
+                android:hint="Email Address *"
+                android:background="@drawable/shape"/>
         </LinearLayout>
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
             <EditText
                 android:id="@+id/password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textPassword"
-                android:hint="Password *" />
+                android:hint="Password *"
+                android:background="@drawable/shape"/>
 
 
         </LinearLayout>
