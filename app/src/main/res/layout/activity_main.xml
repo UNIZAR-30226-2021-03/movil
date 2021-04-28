@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".Home"
     android:background="@color/background">
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
-        android:text="KeyPax"
-        android:textSize="30dp"
-        android:textColor="@color/background"
-        android:background="@color/header"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -26,6 +26,11 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+       /* getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.llave);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);*/
+
+
         /*RequestQueue queue = Volley.newRequestQueue(this);
         String url ="https://keypax-api.sytes.net/public";
 
