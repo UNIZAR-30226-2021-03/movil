@@ -40,12 +40,12 @@ public class SignUpServices {
         }
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaSignUp, body,
                 response -> {
-                    //Log.d("Response", "Success Response: " + response.toString());
+                    Log.d("Response", "Success Response: " + response.toString());
                     callBack.onFinish(1);
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
                     }
                 });

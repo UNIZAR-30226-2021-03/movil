@@ -28,6 +28,7 @@ public class TokenServices {
             //input your API parameters
             body.put("_2faToken",token);
             body.put("code",code);
+            Log.d("BODY", body.toString());
         } catch (JSONException e) {
             Log.d("JSONObject error", "Cannot create JSONObject");
         }
@@ -42,7 +43,7 @@ public class TokenServices {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
                     }
                 });

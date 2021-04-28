@@ -40,34 +40,38 @@ public class LogIn extends AppCompatActivity {
         mail = findViewById(R.id.mail);
         password = findViewById(R.id.password);
         errorConfirm = findViewById(R.id.confirmIncorrectLog);
+
     }
 
     public void onButtonShowPopupWindow(View view) {
 
         //Clase interna para evaluar la respuesta del backend
         class ResponseHandler {
-            public void handler(String statusCode) {
-                if (statusCode.equals("400")) {
+            public void handler(String response) {
+                if (response.equals("400")) {
                     errorConfirm.setText("*No se cumplen los requisitos");
                     errorConfirm.setVisibility(View.VISIBLE);
-                } else if (statusCode.equals("401")) {
+                } else if (response.equals("401")) {
                     errorConfirm.setText("*Contraseña incorrecta");
                     errorConfirm.setVisibility(View.VISIBLE);
-                } else if (statusCode.equals("404")) {
+                } else if (response.equals("404")) {
                     errorConfirm.setText("*El usuario no existe");
                     errorConfirm.setVisibility(View.VISIBLE);
-                } else if (statusCode.equals("501")) {
+                } else if (response.equals("501")) {
                     errorConfirm.setText("*No se puede enviar el email de verificación");
                     errorConfirm.setVisibility(View.VISIBLE);
-                } else if (statusCode.equals("500")) {
+                } else if (response.equals("500")) {
                     errorConfirm.setText("*Server error");
                     errorConfirm.setVisibility(View.VISIBLE);
                 } else {
+                    statusCode = response;
                     // inflate the layout of the popup window
                     LayoutInflater inflater = (LayoutInflater)
                             getSystemService(LAYOUT_INFLATER_SERVICE);
-                    View popupView = inflater.inflate(R.layout.popup_verification, null);
+                    View popupView = inflater.inflate(R.layout.popup_2fa, null);
 
+                    errorCode = (TextView) popupView.findViewById(R.id.incorretCode);
+                    faCode = (EditText) popupView.findViewById(R.id.fa);
                     // create the popup window
                     int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                     int height = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -77,6 +81,7 @@ public class LogIn extends AppCompatActivity {
                     // show the popup window
                     // which view you pass in doesn't matter, it is only used for the window tolken
                     popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
 
                     // dismiss the popup window when touched
                     popupView.setOnTouchListener(new View.OnTouchListener() {
@@ -112,9 +117,10 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void checkCode(View view){
+        //System.out.println("ENTRA EN CHECK CODE");
         class ResponseHandler {
             public void handler(String accesToken) {
-                if (tokenCode == "401") {
+                if (accesToken.equals("401")) {
                     errorCode.setText("*Codigo incorrecto");
                     errorCode.setVisibility(View.VISIBLE);
                 } else {
@@ -124,15 +130,13 @@ public class LogIn extends AppCompatActivity {
                 }
             }
         }
-        errorCode.setVisibility(View.GONE);
-        faCode = findViewById(R.id.fa);
         String code = faCode.getText().toString();
-        errorCode = findViewById(R.id.IncorretCode);
         //tokenCode = TokenServices.checkToken(statusCode, code, this);
         ResponseHandler responseHandler = new ResponseHandler();
 
         dialog.setMessage("Cargando");
         dialog.show();
+        System.out.println(statusCode);
         TokenServices.checkToken(statusCode, code,this,
                 accesToken -> {
                     /* System.out.println(statusCode); */

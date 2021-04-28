@@ -32,12 +32,16 @@ public class LogInServices {
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaLogIn, body,
                 response -> {
-                    //Log.d("Response", "Success Response: " + response.toString());
-                    callBack.onFinish("1");
+                    Log.d("Response", "Success Response: " + response.toString());
+                    try {
+                        callBack.onFinish(response.getString("_2faToken"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
                     }
                 });
