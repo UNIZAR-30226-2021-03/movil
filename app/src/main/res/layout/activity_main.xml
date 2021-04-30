@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttons"
         android:text="Sign up"
+        android:textColor="@color/background"
         android:onClick="signUpActivity"/>
     <Button
         android:id="@+id/button2"

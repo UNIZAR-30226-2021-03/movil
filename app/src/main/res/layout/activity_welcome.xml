@@ -4,19 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical"
-        android:layout_margin="20dp">
-        <ListView
-            android:id="@+id/list_categories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -31,8 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="+ NUEVA CATEGORIA"
+            android:onClick="onButtonShowPopupWindowAddCategory"
             android:backgroundTint="@color/newCategory" />
-
     </LinearLayout>
 
 

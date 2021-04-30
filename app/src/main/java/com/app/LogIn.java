@@ -30,6 +30,7 @@ public class LogIn extends AppCompatActivity {
     private TextView errorCode;
     private PopupWindow popupWindow;
     private ProgressDialog dialog;
+    public static String accesToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,11 +120,12 @@ public class LogIn extends AppCompatActivity {
     public void checkCode(View view){
         //System.out.println("ENTRA EN CHECK CODE");
         class ResponseHandler {
-            public void handler(String accesToken) {
-                if (accesToken.equals("401")) {
+            public void handler(String response2fa) {
+                if (response2fa.equals("401")) {
                     errorCode.setText("*Codigo incorrecto");
                     errorCode.setVisibility(View.VISIBLE);
                 } else {
+                    accesToken = response2fa;
                     popupWindow.dismiss();
                     //IR A PANTALLA WELCOME
                     setContentView(R.layout.activity_welcome);
@@ -138,10 +140,10 @@ public class LogIn extends AppCompatActivity {
         dialog.show();
         System.out.println(statusCode);
         TokenServices.checkToken(statusCode, code,this,
-                accesToken -> {
+                response2fa -> {
                     /* System.out.println(statusCode); */
                     dialog.dismiss();
-                    responseHandler.handler(accesToken);
+                    responseHandler.handler(response2fa);
                 });
         /*if (tokenCode == "401") {
             errorCode.setText("*Codigo incorrecto");
