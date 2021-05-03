@@ -35,8 +35,7 @@
         </activity>
         <activity
             android:name=".Welcome"
-            android:label="Bienvenido"
-            android:parentActivityName=".LogIn">
+            android:label="Bienvenido">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.Home" />

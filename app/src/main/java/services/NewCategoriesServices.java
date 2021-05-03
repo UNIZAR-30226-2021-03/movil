@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class NewCategoriesServices {
     public interface VolleyCallBack {
-        void onFinish(String statusCode);
+        void onFinish(Integer statusCode);
     }
     public static void newCategory(String accessToken, String name, Context context, final NewCategoriesServices.VolleyCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -35,16 +35,12 @@ public class NewCategoriesServices {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaCategory, body,
                 response -> {
                     Log.d("Response", "Success Response: " + response.toString());
-                    try {
-                        callBack.onFinish(response.getString("_2faToken"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    callBack.onFinish(1);
                 },
                 error -> {
                     if (error.networkResponse != null) {
                         Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
-                        callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
+                        callBack.onFinish(error.networkResponse.statusCode);
                     }
                 });
 

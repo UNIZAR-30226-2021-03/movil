@@ -34,7 +34,6 @@ public class SignUp extends AppCompatActivity {
     private EditText password;
     private EditText confirmPassword;
     private TextView errorConfirm;
-    private int statusCode;
     private ProgressDialog dialog;
 
 
