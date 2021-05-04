@@ -128,7 +128,7 @@ public class LogIn extends AppCompatActivity {
                     accesToken = response2fa;
                     popupWindow.dismiss();
                     //IR A PANTALLA WELCOME
-                    setContentView(R.layout.activity_welcome);
+                    welcomeActivity(view);
                 }
             }
         }
@@ -153,6 +153,11 @@ public class LogIn extends AppCompatActivity {
             //IR A PANTALLA WELCOME
             setContentView(R.layout.activity_welcome);
         }*/
+    }
+
+    public void welcomeActivity(View view) {
+        Intent i = new Intent(this,Welcome.class);
+        startActivity(i);
     }
 
 }

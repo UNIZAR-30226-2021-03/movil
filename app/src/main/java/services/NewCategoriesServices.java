@@ -15,7 +15,7 @@ public class NewCategoriesServices {
     public interface VolleyCallBack {
         void onFinish(Integer statusCode);
     }
-    public static void newCategory(String accessToken, String name, Context context, final NewCategoriesServices.VolleyCallBack callBack){
+    public static void newCategory(String accessToken, String name, Context context, final VolleyCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject body = new JSONObject();
         JSONObject header = new JSONObject();

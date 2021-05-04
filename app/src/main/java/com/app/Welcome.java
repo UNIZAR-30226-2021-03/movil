@@ -1,6 +1,7 @@
 package com.app;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -22,7 +24,7 @@ import services.TokenServices;
 public class Welcome extends AppCompatActivity {
     private String accesTokenWelcome;
     private PopupWindow popupWindow;
-    private EditText newCategory;
+    private EditText newCategoryName;
     private ProgressDialog dialog;
     private TextView errorAdd;
     private static final int SIGN_OFF = Menu.FIRST;
@@ -36,34 +38,50 @@ public class Welcome extends AppCompatActivity {
         setTitle("Bienvenido");
 
         accesTokenWelcome = LogIn.accesToken;
+        Button save = (Button) findViewById(R.id.newCategory);
+
+        /*save.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                System.out.println("EEEYEYEYEYE");
+                LayoutInflater inflater = (LayoutInflater)
+                        getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.popup_new_category, null);
+
+                newCategoryName = popupView.findViewById(R.id.nameCategory);
+                errorAdd = popupView.findViewById(R.id.incorretCategory);
+                // create the popup window
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = true; // lets taps outside the popup also dismiss it
+                popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                // show the popup window
+                // which view you pass in doesn't matter, it is only used for the window tolken
+                popupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
+
+                // dismiss the popup window when touched
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        popupWindow.dismiss();
+                        setContentView(R.layout.activity_welcome);
+                        return true;
+                    }
+                });
+            }
+        });*/
+
     }
 
-    /** Se llama cuando la actividad se crea por primera vez y genera un menú de opciones */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        boolean result = super.onCreateOptionsMenu(menu);
-        menu.add(Menu.NONE, SIGN_OFF, Menu.NONE, "Cerrar sesión");
-        //test?
-        return result;
-    }
-
-    /** Se llama cuando el usuario selecciona una opción del menú*/
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case SIGN_OFF:
-                setContentView(R.layout.activity_main);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void onButtonShowPopupWindowAddCategory(View view) {
+    public void addCategoryName(View view) {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_new_category, null);
 
+        newCategoryName = popupView.findViewById(R.id.nameCategory);
+        errorAdd = popupView.findViewById(R.id.incorretCategory);
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -74,8 +92,6 @@ public class Welcome extends AppCompatActivity {
         // which view you pass in doesn't matter, it is only used for the window tolken
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        newCategory = (EditText) popupView.findViewById(R.id.newCategory);
-        errorAdd = (TextView) popupView.findViewById(R.id.incorretCategory);
         // dismiss the popup window when touched
         popupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -86,6 +102,28 @@ public class Welcome extends AppCompatActivity {
             }
         });
     }
+
+    /** Se llama cuando la actividad se crea por primera vez y genera un menú de opciones */
+   /* @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.add(Menu.NONE, SIGN_OFF, Menu.NONE, "Cerrar sesión");
+        //test?
+        return result;
+    }
+
+    /** Se llama cuando el usuario selecciona una opción del menú*/
+   /* @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case SIGN_OFF:
+                setContentView(R.layout.activity_main);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }*/
+
+
 
 
     public void addCategory(View view){
@@ -107,13 +145,13 @@ public class Welcome extends AppCompatActivity {
                 }
             }
         }
-        String nameNewCategory = newCategory.getText().toString();
+        String name = newCategoryName.getText().toString();
         //tokenCode = TokenServices.checkToken(statusCode, code, this);
         ResponseHandler responseHandler = new ResponseHandler();
 
         dialog.setMessage("Cargando");
         dialog.show();
-        NewCategoriesServices.newCategory(accesTokenWelcome,nameNewCategory, this,
+        NewCategoriesServices.newCategory(accesTokenWelcome,name, this,
                 statusCode -> {
                     /* System.out.println(statusCode); */
                     dialog.dismiss();

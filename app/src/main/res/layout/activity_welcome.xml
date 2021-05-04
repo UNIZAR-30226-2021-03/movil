@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="+ NUEVA CATEGORIA"
-            android:onClick="onButtonShowPopupWindowAddCategory"
+            android:onClick="addCategoryName"
             android:backgroundTint="@color/newCategory" />
     </LinearLayout>
 
