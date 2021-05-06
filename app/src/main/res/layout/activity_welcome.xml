@@ -13,8 +13,12 @@
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:layout_margin="20dp">
+        <ListView
+            android:id="@+id/list_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/newCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

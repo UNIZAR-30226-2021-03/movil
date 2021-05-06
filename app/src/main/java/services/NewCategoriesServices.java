@@ -32,7 +32,20 @@ public class NewCategoriesServices {
             Log.d("JSONObject error", "Cannot create JSONObject body");
         }
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaCategory, body,
+        JsonObjectRequest requestHeader = new JsonObjectRequest(Request.Method.POST, Routes.rutaCategory, header,
+                response -> {
+                    Log.d("Response", "Success Response: " + response.toString());
+                    callBack.onFinish(1);
+                },
+                error -> {
+                    if (error.networkResponse != null) {
+                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        callBack.onFinish(error.networkResponse.statusCode);
+                    }
+                });
+        requestQueue.add(requestHeader);
+
+        JsonObjectRequest requestBody = new JsonObjectRequest(Request.Method.POST, Routes.rutaCategory, body,
                 response -> {
                     Log.d("Response", "Success Response: " + response.toString());
                     callBack.onFinish(1);
@@ -44,6 +57,6 @@ public class NewCategoriesServices {
                     }
                 });
 
-        requestQueue.add(request);
+        requestQueue.add(requestBody);
     }
 }
