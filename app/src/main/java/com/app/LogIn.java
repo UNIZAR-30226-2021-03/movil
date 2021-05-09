@@ -30,7 +30,7 @@ public class LogIn extends AppCompatActivity {
     private TextView errorCode;
     private PopupWindow popupWindow;
     private ProgressDialog dialog;
-    public static String accesToken;
+    private String accesToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,13 +108,15 @@ public class LogIn extends AppCompatActivity {
 
         dialog.setMessage("Cargando");
         dialog.show();
+
         LogInServices.logIn(auxMail, auxPassword,this,
                 statusCode -> {
-                    /* System.out.println(statusCode); */
+                    // System.out.println(statusCode);
                     dialog.dismiss();
                     responseHandler.handler(statusCode);
                 });
 
+        //responseHandler.handler("200");dialog.dismiss();
     }
 
     public void checkCode(View view){
@@ -124,16 +126,19 @@ public class LogIn extends AppCompatActivity {
                 if (response2fa.equals("401")) {
                     errorCode.setText("*Codigo incorrecto");
                     errorCode.setVisibility(View.VISIBLE);
-                } else {
+                }else if(response2fa.equals("500")){
+                    errorCode.setText("*Error del servidor, intentelo más tarde");
+                    errorCode.setVisibility(View.VISIBLE);
+                } else{
                     accesToken = response2fa;
+                    System.out.println(accesToken);
                     popupWindow.dismiss();
                     //IR A PANTALLA WELCOME
-                    welcomeActivity(view);
+                    welcomeActivity(view,accesToken);
                 }
             }
         }
         String code = faCode.getText().toString();
-        //tokenCode = TokenServices.checkToken(statusCode, code, this);
         ResponseHandler responseHandler = new ResponseHandler();
 
         dialog.setMessage("Cargando");
@@ -145,18 +150,11 @@ public class LogIn extends AppCompatActivity {
                     dialog.dismiss();
                     responseHandler.handler(response2fa);
                 });
-        /*if (tokenCode == "401") {
-            errorCode.setText("*Codigo incorrecto");
-            errorCode.setVisibility(View.VISIBLE);
-        } else {
-            popupWindow.dismiss();
-            //IR A PANTALLA WELCOME
-            setContentView(R.layout.activity_welcome);
-        }*/
     }
 
-    public void welcomeActivity(View view) {
+    public void welcomeActivity(View view, String accessToken) {
         Intent i = new Intent(this,Welcome.class);
+        i.putExtra("accessToken",accessToken);
         startActivity(i);
     }
 

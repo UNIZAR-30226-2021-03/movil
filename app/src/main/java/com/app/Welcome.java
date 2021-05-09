@@ -35,12 +35,18 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         dialog = new ProgressDialog(this);
+        Intent i = getIntent();
+        accesTokenWelcome = i.getStringExtra("accessToken");
 
         setTitle("Bienvenido");
+        reloadScreen();
 
-        accesTokenWelcome = LogIn.accesToken;
+    }
+
+    public void reloadScreen(){
         class ResponseHandler {
             public void handler(String list) {
+                System.out.println(list);
                 if (list.equals("403")) {
                     //HACER ALGO
                 }
@@ -55,7 +61,6 @@ public class Welcome extends AppCompatActivity {
         dialog.show();
         ListCategoriesServices.listCategories(accesTokenWelcome,this,
                 list -> {
-                    /* System.out.println(statusCode); */
                     dialog.dismiss();
                     responseHandler.handler(list);
                 });
@@ -130,7 +135,8 @@ public class Welcome extends AppCompatActivity {
                     //CREAR CUADRO CON LA CATEGORIA
 
                     //IR A PANTALLA DE LA ACTIVIDAD CREADA
-                    setContentView(R.layout.activity_welcome);
+                    reloadScreen();
+                    //setContentView(R.layout.activity_welcome);
                 }
             }
         }
@@ -141,8 +147,7 @@ public class Welcome extends AppCompatActivity {
         dialog.setMessage("Cargando");
         dialog.show();
         NewCategoriesServices.newCategory(accesTokenWelcome,name, this,
-                statusCode -> {
-                    /* System.out.println(statusCode); */
+                (Integer statusCode) -> {
                     dialog.dismiss();
                     responseHandler.handler(statusCode);
                 });
