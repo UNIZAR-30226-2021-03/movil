@@ -85,7 +85,7 @@ public class AuthService {
     ///////Funciones para 2FA///////////////
 
     public interface _2FACallBack {
-        void onFinish(String accessToken);
+        void onFinish(String accessToken,String nickname);
     }
     public static void _2fa(String token, String code, Context context, final _2FACallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -102,7 +102,7 @@ public class AuthService {
                 response -> {
                     //Log.d("Response", "Success Response: " + response.toString());
                     try {
-                        callBack.onFinish(response.getString("accessToken"));
+                        callBack.onFinish(response.getString("accessToken"),response.getString("nickname"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -110,7 +110,7 @@ public class AuthService {
                 error -> {
                     if (error.networkResponse != null) {
                         Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
-                        callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
+                        callBack.onFinish((String.valueOf(error.networkResponse.statusCode)),"");
                     }
                 });
 

@@ -32,6 +32,7 @@ import services.CategoryService;
 
 public class Welcome extends AppCompatActivity {
     private String accesTokenWelcome;
+    private String nickname;
     private PopupWindow popupWindow;
     private EditText newCategoryName;
     private ProgressDialog dialog;
@@ -53,10 +54,11 @@ public class Welcome extends AppCompatActivity {
         dialog = new ProgressDialog(this);
         Intent i = getIntent();
         accesTokenWelcome = i.getStringExtra("accessToken");
+        nickname = i.getStringExtra("nickname");
         lista = findViewById(R.id.list_categories);
         ctx = this;
 
-        setTitle("Bienvenido");
+        setTitle("Bienvenido "+nickname);
         fillData(true);
         registerForContextMenu(lista);
 
@@ -126,6 +128,8 @@ public class Welcome extends AppCompatActivity {
                 ArrayList<Category> categorias = Category.fromJson(list);
                 CategoryAdapter adapter = new CategoryAdapter(ctx, categorias);
                 lista.setAdapter(adapter);
+                dialog.dismiss();
+
             }
         }
         ResponseHandler responseHandler = new ResponseHandler();
@@ -137,9 +141,6 @@ public class Welcome extends AppCompatActivity {
         SystemClock.sleep(300);
         CategoryService.ListCategories(accesTokenWelcome,this,
                 list -> {
-                    if(delay) {
-                        dialog.dismiss();
-                    }
                     responseHandler.handler(list);
                 });
     }
@@ -178,9 +179,11 @@ public class Welcome extends AppCompatActivity {
         class ResponseHandler {
             public void handler(Integer statusCode) {
                 if (statusCode==452) {
+                    dialog.dismiss();
                     errorAdd.setText("*No se ha podido crear la categoría");
                     errorAdd.setVisibility(View.VISIBLE);
                 } else if (statusCode==403) {
+                    dialog.dismiss();
                     errorAdd.setText("*Ha ocurrido un fallo");
                     errorAdd.setVisibility(View.VISIBLE);
                 }
@@ -198,7 +201,6 @@ public class Welcome extends AppCompatActivity {
         dialog.show();
         CategoryService.NewCategory(accesTokenWelcome,name, this,
                 (Integer statusCode) -> {
-                    dialog.dismiss();
                     responseHandler.handler(statusCode);
                 });
     }
@@ -238,12 +240,15 @@ public class Welcome extends AppCompatActivity {
         class ResponseHandler {
             public void handler(Integer statusCode) {
                 if (statusCode==454) {
+                    dialog.dismiss();
                     errorAdd.setText("*No se ha podido actualizar la categoría");
                     errorAdd.setVisibility(View.VISIBLE);
                 } else if (statusCode==403) {
+                    dialog.dismiss();
                     errorAdd.setText("*Ha ocurrido un fallo");
                     errorAdd.setVisibility(View.VISIBLE);
                 }else if (statusCode==401) {
+                    dialog.dismiss();
                     errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
                     errorAdd.setVisibility(View.VISIBLE);
                 }
@@ -261,7 +266,7 @@ public class Welcome extends AppCompatActivity {
         dialog.show();
         CategoryService.RenameCategory(accesTokenWelcome,working_id,name, this,
                 (Integer statusCode) -> {
-                    dialog.dismiss();
+
                     responseHandler.handler(statusCode);
                 });
     }

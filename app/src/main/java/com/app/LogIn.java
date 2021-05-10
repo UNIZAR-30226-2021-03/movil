@@ -24,12 +24,10 @@ public class LogIn extends AppCompatActivity {
     private EditText password;
     private EditText faCode;
     private String statusCode;
-    private String tokenCode;
     private TextView errorConfirm;
     private TextView errorCode;
     private PopupWindow popupWindow;
     private ProgressDialog dialog;
-    private String accesToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +122,7 @@ public class LogIn extends AppCompatActivity {
     public void checkCode(View view){
         //System.out.println("ENTRA EN CHECK CODE");
         class ResponseHandler {
-            public void handler(String response2fa) {
+            public void handler(String response2fa,String _nickname) {
                 if (response2fa.equals("401")) {
                     errorCode.setText("*Codigo incorrecto");
                     errorCode.setVisibility(View.VISIBLE);
@@ -132,11 +130,10 @@ public class LogIn extends AppCompatActivity {
                     errorCode.setText("*Error del servidor, intentelo más tarde");
                     errorCode.setVisibility(View.VISIBLE);
                 } else{
-                    accesToken = response2fa;
-                    System.out.println(accesToken);
+                    System.out.println(response2fa);
                     popupWindow.dismiss();
                     //IR A PANTALLA WELCOME
-                    welcomeActivity(view,accesToken);
+                    welcomeActivity(response2fa,_nickname);
                 }
             }
         }
@@ -146,18 +143,22 @@ public class LogIn extends AppCompatActivity {
         dialog.setMessage("Cargando");
         dialog.show();
         System.out.println(statusCode);
-        AuthService._2fa(statusCode, code,this,
-                response2fa -> {
-                    /* System.out.println(statusCode); */
-                    dialog.dismiss();
-                    responseHandler.handler(response2fa);
-                });
+        AuthService._2fa(statusCode, code,this, new AuthService._2FACallBack() {
+            @Override
+            public void onFinish(String accessToken, String nickname) {
+                /* System.out.println(statusCode); */
+                dialog.dismiss();
+                responseHandler.handler(accessToken,nickname);
+            }
+        });
     }
 
-    public void welcomeActivity(View view, String accessToken) {
+    public void welcomeActivity(String accessToken, String nickname) {
         Intent i = new Intent(this,Welcome.class);
         i.putExtra("accessToken",accessToken);
+        i.putExtra("nickname",nickname);
         startActivity(i);
+        finish();
     }
 
 }
