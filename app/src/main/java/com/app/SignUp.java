@@ -16,16 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONObject;
-
-import services.SignUpServices;
+import services.AuthService;
 
 public class SignUp extends AppCompatActivity {
 
@@ -108,9 +99,8 @@ public class SignUp extends AppCompatActivity {
         if(auxPassword.equals(auxConfirmPassword)){
             dialog.setMessage("Cargando");
             dialog.show();
-            SignUpServices.signUp(auxMail, auxApodo, auxPassword,this,
+            AuthService.SignUp(auxMail, auxApodo, auxPassword,this,
                     statusCode -> {
-                        /* System.out.println(statusCode); */
                         dialog.dismiss();
                         responseHandler.handler(statusCode);
                     });

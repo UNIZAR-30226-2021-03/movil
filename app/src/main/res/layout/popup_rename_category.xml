@@ -19,7 +19,7 @@
             android:textSize="22sp"
             android:layout_gravity="center"
             android:textAlignment="center"
-            android:text="Introduzca un nombre para la categoría:"
+            android:text="Introduzca el nuevo nombre:"
             android:textColor="@color/buttons"/>
 
         <LinearLayout
@@ -56,7 +56,7 @@
             android:backgroundTint="@color/buttons"
             android:layout_gravity="center_horizontal"
             android:text="GUARDAR"
-            android:onClick="commitAdd"
+            android:onClick="commitRename"
             android:textColor="@color/background" />
     </LinearLayout>
 

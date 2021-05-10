@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import services.LogInServices;
-import services.SignUpServices;
-import services.TokenServices;
+
+import services.AuthService;
 
 public class LogIn extends AppCompatActivity {
 
@@ -106,15 +105,18 @@ public class LogIn extends AppCompatActivity {
 
         //statusCode = LogInServices.logIn(auxMail, auxPassword,this);
 
+
         dialog.setMessage("Cargando");
         dialog.show();
 
-        LogInServices.logIn(auxMail, auxPassword,this,
+        AuthService.LogIn(auxMail, auxPassword,this,
                 statusCode -> {
                     // System.out.println(statusCode);
                     dialog.dismiss();
                     responseHandler.handler(statusCode);
                 });
+
+       //welcomeActivity(view,"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjA2NjIzMTUsImV4cCI6MTYyMDY2NTkxNX0.RBTY9lWNE5REION6g4ZJlpCkDORA8lz27Hs5fhWsaXk");
 
         //responseHandler.handler("200");dialog.dismiss();
     }
@@ -144,7 +146,7 @@ public class LogIn extends AppCompatActivity {
         dialog.setMessage("Cargando");
         dialog.show();
         System.out.println(statusCode);
-        TokenServices.checkToken(statusCode, code,this,
+        AuthService._2fa(statusCode, code,this,
                 response2fa -> {
                     /* System.out.println(statusCode); */
                     dialog.dismiss();
