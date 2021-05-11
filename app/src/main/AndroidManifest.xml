@@ -37,6 +37,14 @@
             android:name=".Welcome"
             android:label="Bienvenido">
         </activity>
+        <activity
+            android:name=".Infos"
+            android:label="Infos"
+            android:parentActivityName=".Welcome">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.app.Welcome" />
+        </activity>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

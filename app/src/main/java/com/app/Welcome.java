@@ -31,15 +31,16 @@ import adapters.CategoryAdapter;
 import services.CategoryService;
 
 public class Welcome extends AppCompatActivity {
-    private String accesTokenWelcome;
-    private String nickname;
-    private PopupWindow popupWindow;
-    private EditText newCategoryName;
-    private ProgressDialog dialog;
-    private TextView errorAdd;
-    private ListView lista;
-    private String working_id;
-    private Context ctx;
+    private static String accesTokenWelcome;
+    private static String nickname;
+    private static PopupWindow popupWindow;
+    private static EditText newCategoryName;
+    private static ProgressDialog dialog;
+    private static TextView errorAdd;
+    private static ListView lista;
+    private static String working_id;
+    private static Context ctx;
+    private static Intent i;
 
     /**Atributos de la clase para distinguir opciones de menú*/
     private static final int BORRAR_CAT = Menu.FIRST+1;
@@ -52,13 +53,15 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         dialog = new ProgressDialog(this);
-        Intent i = getIntent();
+        i = getIntent();
         accesTokenWelcome = i.getStringExtra("accessToken");
         nickname = i.getStringExtra("nickname");
         lista = findViewById(R.id.list_categories);
         ctx = this;
 
         setTitle("Bienvenido "+nickname);
+
+        System.out.println(accesTokenWelcome);
         fillData(true);
         registerForContextMenu(lista);
 
@@ -107,14 +110,10 @@ public class Welcome extends AppCompatActivity {
                 deleteCategory();
                 return true;
             case VER_CAT:
-                //TODO: Iniciar nueva actividad
-                //System.out.println(cat.get_id());
-                //System.out.println(cat.getName());
+                infosActivity(cat.getName());
                 return true;
             case RENOMBRAR_CAT:
                 renameCategory();
-                //System.out.println(cat.get_id());
-                //System.out.println(cat.getName());
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -323,5 +322,13 @@ public class Welcome extends AppCompatActivity {
         Intent i = new Intent(this,Home.class);
         startActivity(i);
         finish();
+    }
+
+    public void infosActivity(String category_name) {
+        Intent i = new Intent(this,Infos.class);
+        i.putExtra("accessToken",accesTokenWelcome);
+        i.putExtra("category_id",working_id);
+        i.putExtra("category_name",category_name);
+        startActivity(i);
     }
 }
