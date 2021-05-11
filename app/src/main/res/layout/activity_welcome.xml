@@ -14,7 +14,7 @@
         android:layout_margin="20dp">
         <Button
             android:id="@+id/newCategory"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="+ NUEVA CATEGORIA"
@@ -26,8 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:divider="@android:color/transparent"
-            android:dividerHeight="10.0sp"
-            />
+            android:dividerHeight="10.0sp" />
     </LinearLayout>
 
 
