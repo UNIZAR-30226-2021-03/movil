@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_margin="15dp">
         <Button
             android:id="@+id/newCategory"
             android:layout_width="300dp"
@@ -26,43 +26,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:divider="@android:color/transparent"
-            android:dividerHeight="10.0sp" />
+            android:dividerHeight="10.0sp"
+            android:padding="10dp"/>
     </LinearLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/footer"
-        android:layout_width="fill_parent"
-        android:layout_height="75dp"
-        android:background="@color/buttons"
-        android:orientation="horizontal"
-        android:text="footer"
-        android:layout_alignParentBottom="true" >
-        <TextView
-            android:id="@+id/contact"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="CONTACT US"
-            android:textColor="@color/background" />
-        <TextView
-            android:id="@+id/mail2"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="barbarosoft@gmail.com\nEINA Unizar"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@id/contact"
-            android:textColor="@color/background" />
-        <TextView
-            android:id="@+id/watermark"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="©Barbaro Software Inc. 2021"
-            android:layout_alignParentRight="true"
-            android:gravity="bottom"
-            android:textColor="@color/background" />
-    </RelativeLayout>
-
-
 
 
 </RelativeLayout>

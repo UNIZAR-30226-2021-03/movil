@@ -187,6 +187,16 @@ public class Welcome extends AppCompatActivity {
                     errorAdd.setText("*Ha ocurrido un fallo");
                     errorAdd.setVisibility(View.VISIBLE);
                 }
+                else if (statusCode == 400){
+                    dialog.dismiss();
+                    errorAdd.setText("*Máximo 50 caracteres");
+                    errorAdd.setVisibility(View.VISIBLE);
+                }
+                else if (statusCode == 401){
+                    dialog.dismiss();
+                    errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
+                    errorAdd.setVisibility(View.VISIBLE);
+                }
                 else if (statusCode==200){
                     popupWindow.dismiss();
                     //Refrescar lista
@@ -247,6 +257,11 @@ public class Welcome extends AppCompatActivity {
                     dialog.dismiss();
                     errorAdd.setText("*Ha ocurrido un fallo");
                     errorAdd.setVisibility(View.VISIBLE);
+                }
+                else if (statusCode == 400){
+                    dialog.dismiss();
+                    errorAdd.setText("*Máximo 50 caracteres");
+                    errorAdd.setVisibility(View.VISIBLE);
                 }else if (statusCode==401) {
                     dialog.dismiss();
                     errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
@@ -281,7 +296,8 @@ public class Welcome extends AppCompatActivity {
                 } else if (statusCode==403) {
                     errorAdd.setText("*Ha ocurrido un fallo");
                     errorAdd.setVisibility(View.VISIBLE);
-                }else if (statusCode==401) {
+                }
+                else if (statusCode==401) {
                     errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
                     errorAdd.setVisibility(View.VISIBLE);
                 }
