@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
     android:layout_height="40dp"
-    android:background="@drawable/layout_rounded_corner"
+    android:background="@drawable/layout_rounded_corner2"
     android:layout_gravity="center_horizontal"
     android:orientation="horizontal"
     android:padding="3dp"
@@ -14,6 +14,7 @@
         android:textColor="#ffffff"
         android:textSize="16sp"
         android:gravity="center"
+        android:text="PRUEBA"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

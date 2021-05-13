@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import adapters.Category;
 import adapters.Info;
 import adapters.InfoAdapter;
 import services.CategoryService;
@@ -214,4 +215,5 @@ public class Infos extends AppCompatActivity {
         startActivity(i);
         finish();
     }
+
 }

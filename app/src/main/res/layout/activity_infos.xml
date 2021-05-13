@@ -17,7 +17,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="+ NUEVA CONTRASEÑA"
+            android:text="+ AÑADIR CONTRASEÑA"
             android:onClick="addInfo"
             android:backgroundTint="@color/newCategory" />
         <ListView
