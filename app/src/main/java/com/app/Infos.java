@@ -88,6 +88,12 @@ public class Infos extends AppCompatActivity {
         finish();
         return true;
     }
+    //Para cuando se vuelve
+    @Override
+    public void onResume() {
+        super.onResume();
+        fillData(true);
+    }
 
     /** Se llama cuando la actividad se crea por primera vez y genera un menú contextual */
     @Override
@@ -111,7 +117,7 @@ public class Infos extends AppCompatActivity {
                 deleteInfo(category_id,inf.get_id());
                 return true;
             case VER_INFO:
-                //infosActivity(cat.getName());
+                editInfo(inf);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -148,38 +154,26 @@ public class Infos extends AppCompatActivity {
 
         //TODO: Abrá que hacer el módulo de generer contraseñas aleatorias
 
-        //Provisional:
+        Intent i = new Intent(this,EditInfo.class);
+        i.putExtra("accessToken",accesToken);
+        i.putExtra("category_id",category_id);
+        i.putExtra("is_new",true);
+        startActivity(i);
+    }
+    public void editInfo(Info info){
 
-        JSONObject body = new JSONObject();
-
-        try{
-            body.put("category_id",category_id);
-            body.put("name","prueba");
-            body.put("username","artur");
-            body.put("password","1234");
-            body.put("url","https://moodle.es");
-            body.put("description","hola buenas tardes");
-
-        }catch(JSONException e){
-
-        }
-
-        class ResponseHandler {
-            public void handler(Integer statusCode) {
-                //TODO: Gestionar los errores, con un dialogo de error quiza?
-
-                //Refrescar lista
-                fillData(false);
-                dialog.dismiss();
-
-            }
-        }
-        ResponseHandler responseHandler = new ResponseHandler();
-
-        dialog.setMessage("Cargando");
-        dialog.show();
-        InfoService.AddInfo(accesToken, body, this,
-                statusCode -> responseHandler.handler(statusCode));
+        Intent i = new Intent(this,EditInfo.class);
+        i.putExtra("accessToken",accesToken);
+        i.putExtra("category_id",category_id);
+        i.putExtra("is_new",false);
+        i.putExtra("info_id",info.get_id());
+        i.putExtra("name",info.getName());
+        i.putExtra("username",info.getUsername());
+        i.putExtra("password",info.getPassword());
+        i.putExtra("date",info.getCreation_date());
+        i.putExtra("url",info.getUrl());
+        i.putExtra("description",info.getDecription());
+        startActivity(i);
     }
 
     public void deleteInfo(String category_id, String info_id){

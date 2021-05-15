@@ -45,6 +45,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.Welcome" />
         </activity>
+        <activity
+            android:name=".EditInfo"
+            android:label="Nueva Contraseña"
+            android:parentActivityName=".Infos">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.app.Infos" />
+        </activity>
 
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

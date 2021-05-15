@@ -115,7 +115,7 @@ public class LogIn extends AppCompatActivity {
                     responseHandler.handler(statusCode);
                 });
 
-       // welcomeActivity("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjA3NDUwODAsImV4cCI6MTYyMDc0ODY4MH0.B4Ec70Iea6HKGmbgwmnbcjYRALp0RfkLMuVY_dOKEj0", "borq");
+       // welcomeActivity("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjExMDM0NzcsImV4cCI6MTYyMTEwNzA3N30.DHlSAT-GBDszVbMT2uDXcHXdGyBTR1QaCDxsOC1LcrQ", "Artur");
 
         //responseHandler.handler("200");dialog.dismiss();
     }

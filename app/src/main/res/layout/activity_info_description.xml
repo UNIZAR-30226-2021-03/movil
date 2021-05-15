@@ -1,43 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/footer"
-        android:layout_width="fill_parent"
-        android:layout_height="70dp"
-        android:background="@color/navyBlue"
-        android:orientation="horizontal"
-        android:layout_alignParentTop="true" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/background"
-            android:gravity="center"
-            android:text="PRUEBA"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-
-        <ImageButton
-            android:id="@+id/deleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_menu_delete"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="8dp" />
-    </RelativeLayout>
-    <LinearLayout
+       <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+        android:paddingTop="30sp"
+           android:paddingBottom="30sp"
+           android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+           android:focusable="true"
+           android:focusableInTouchMode="true">
         <TextView
             android:layout_width="77dp"
             android:layout_height="wrap_content"
@@ -48,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp">
             <EditText
-                android:id="@+id/nombre"
+                android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -64,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp">
             <EditText
-                android:id="@+id/usuario"
+                android:id="@+id/username"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -87,7 +64,31 @@
                 android:inputType="textPassword"
                 android:background="@drawable/layout_screen_info"/>
 
+            <ImageButton
+                android:id="@+id/copyPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:onClick="copyPassword"
+                app:srcCompat="?attr/actionModeCopyDrawable" />
+            <ImageButton
+                android:id="@+id/showPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:onClick="setVisible"
+                app:srcCompat="@android:drawable/ic_menu_view" />
+
         </LinearLayout>
+           <Button
+               android:id="@+id/generatePassword"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center"
+               android:backgroundTint="@color/buttons"
+               android:onClick="generatePassword"
+               android:text="GENERAR"
+               android:textColor="@color/background" />
         <TextView
             android:layout_width="77dp"
             android:layout_height="wrap_content"
@@ -116,7 +117,7 @@
             <EditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
-                android:layout_height="119dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/layout_screen_info" />
         </LinearLayout>
 
@@ -130,11 +131,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:backgroundTint="@color/buttons"
-            android:onClick="onButtonShowPopupWindowClick"
-            android:text="GUARDAR"
+            android:onClick="saveInfo"
+            android:text="GUARDAR y SALIR"
             android:textColor="@color/background" />
 
     </LinearLayout>
 
 
-</RelativeLayout>
+</ScrollView>

@@ -82,7 +82,7 @@ public class InfoService {
         requestQueue.add(request);
     }
 
-    ////Función para Renombrar Categorias
+    ////Función para Eliminar infos
     public interface DeleteInfoCallBack {
         void onFinish(Integer statusCode);
     }
@@ -95,6 +95,33 @@ public class InfoService {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {
                     //Log.d("Response", "Success Response: " + response.toString());
+                    callBack.onFinish(200);
+                },
+                error -> {
+                    if (error.networkResponse != null) {
+                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        callBack.onFinish(error.networkResponse.statusCode);
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("accessToken", accessToken);
+                return params;
+            }};
+        requestQueue.add(request);
+    }
+
+    ////Función para Actualizar Infos
+    public interface UpdateInfoCallBack {
+        void onFinish(Integer statusCode);
+    }
+
+    public static void UpdateInfo(String accessToken,JSONObject body, Context context, final UpdateInfoCallBack callBack){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, Routes.rutaUpdateInfo, body,
+                response -> {
                     callBack.onFinish(200);
                 },
                 error -> {

@@ -12,8 +12,8 @@ public class Info {
     private String name;
     private String username;
     private String password;
-    private String url;
-    private String decription;
+    private String url=""; //default value
+    private String decription="";
     private String creation_date;
     private String file_id;
     private String file_name;
