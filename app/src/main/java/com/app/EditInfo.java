@@ -48,6 +48,7 @@ public class EditInfo extends AppCompatActivity {
     private Boolean visible=false;
     private CheckBox upper,lower,numbers;
     private EditText tamaño;
+    private EditText specialCharacters;
     private Intent i;
     private PopupWindow popupWindow;
 
@@ -150,9 +151,11 @@ public class EditInfo extends AppCompatActivity {
         Boolean use_upper,use_lower,use_numbers;
         int tam=10;
         String tmp;
+        String specials;
         use_upper = upper.isChecked();
         use_lower = lower.isChecked();
         use_numbers = numbers.isChecked();
+        specials = specialCharacters.getText().toString();
 
         tmp=tamaño.getText().toString();
         if(!tmp.equals("")){tam=Integer.parseInt(tmp);}
@@ -171,6 +174,7 @@ public class EditInfo extends AppCompatActivity {
         View popupView = inflater.inflate(R.layout.popup_generate_password, null);
 
         tamaño = (EditText) popupView.findViewById(R.id.tamanyo);
+        specialCharacters = (EditText) popupView.findViewById(R.id.specialCharacters);
         upper = (CheckBox) popupView.findViewById(R.id.upper);
         lower = (CheckBox) popupView.findViewById(R.id.lower);
         numbers = (CheckBox) popupView.findViewById(R.id.numbers);
