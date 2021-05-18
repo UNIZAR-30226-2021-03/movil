@@ -9,10 +9,11 @@ public final class PasswordGenerator {
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String DIGITS = "0123456789";
-    private static final String SPECIAL = "";
+    private static String SPECIAL = "";
     private boolean useLower;
     private boolean useUpper;
     private boolean useDigits;
+    private boolean useSpecial;
 
     private PasswordGenerator() {
         throw new UnsupportedOperationException("Empty constructor is not supported.");
@@ -22,6 +23,8 @@ public final class PasswordGenerator {
         this.useLower = builder.useLower;
         this.useUpper = builder.useUpper;
         this.useDigits = builder.useDigits;
+        this.useSpecial = builder.useSpecial;
+        this.SPECIAL = builder.SPECIAL;
     }
 
     public static class PasswordGeneratorBuilder {
@@ -29,11 +32,14 @@ public final class PasswordGenerator {
         private boolean useLower;
         private boolean useUpper;
         private boolean useDigits;
+        private boolean useSpecial;
+        private static String SPECIAL = "";
 
         public PasswordGeneratorBuilder() {
             this.useLower = false;
             this.useUpper = false;
             this.useDigits = false;
+            this.useSpecial = false;
         }
 
         /**
@@ -75,6 +81,11 @@ public final class PasswordGenerator {
             return this;
         }
 
+        public PasswordGeneratorBuilder useSpecial(String special) {
+            this.useSpecial = true;
+            this.SPECIAL = special;
+            return this;
+        }
 
         /**
          * Get an object to use.
@@ -116,6 +127,8 @@ public final class PasswordGenerator {
         }
         if (useDigits) {
             charCategories.add(DIGITS);
+        }if (useSpecial) {
+            charCategories.add(SPECIAL);
         }
 
         // Build the password.

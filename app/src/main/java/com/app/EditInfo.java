@@ -161,7 +161,7 @@ public class EditInfo extends AppCompatActivity {
         if(!tmp.equals("")){tam=Integer.parseInt(tmp);}
 
         PasswordGenerator generator = new PasswordGenerator.PasswordGeneratorBuilder()
-                .useDigits(use_numbers).useLower(use_lower).useUpper(use_upper).build();
+                .useDigits(use_numbers).useLower(use_lower).useUpper(use_upper).useSpecial(specials).build();
         String generated = generator.generate(tam);
         password.setText(generated);
         popupWindow.dismiss();
