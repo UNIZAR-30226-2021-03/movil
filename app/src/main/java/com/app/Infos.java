@@ -9,25 +9,19 @@ import android.os.SystemClock;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import adapters.Category;
 import adapters.Info;
 import adapters.InfoAdapter;
-import services.CategoryService;
 import services.InfoService;
 
 public class Infos extends AppCompatActivity {
@@ -36,6 +30,7 @@ public class Infos extends AppCompatActivity {
     private String category_id;
     private String category_name;
     private ProgressDialog dialog;
+    private ProgressDialog dialogError;
     private ListView lista;
     private Context ctx;
 
@@ -50,6 +45,7 @@ public class Infos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infos);
         dialog = new ProgressDialog(this);
+        dialogError = new ProgressDialog(this);
         Intent i = getIntent();
         accesToken = i.getStringExtra("accessToken");
         category_id = i.getStringExtra("category_id");
@@ -127,14 +123,30 @@ public class Infos extends AppCompatActivity {
     public void fillData(Boolean delay){
         class ResponseHandler {
             public void handler(JSONArray list) {
-                // TODO: Comprobar fallos!! Códigos de ERROOORR
-                ArrayList<Info> infos = Info.fromJson(list);
-                InfoAdapter adapter = new InfoAdapter(ctx, infos);
-                lista.setAdapter(adapter);
-                dialog.dismiss();
+                if (list.equals("403")) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.show();
 
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
+                else if (list.equals("401")) {
+                    dialog.dismiss();
+                    dialogError.setMessage("La sesión ha caducado, vuelva a iniciar sesión");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
+                else{
+                    ArrayList<Info> infos = Info.fromJson(list);
+                    InfoAdapter adapter = new InfoAdapter(ctx, infos);
+                    lista.setAdapter(adapter);
+                    dialog.dismiss();
+                }
             }
         }
+
+        dialogError.setCanceledOnTouchOutside(false);
         ResponseHandler responseHandler = new ResponseHandler();
         if(delay) {
             dialog.setMessage("Cargando");
@@ -179,14 +191,25 @@ public class Infos extends AppCompatActivity {
     public void deleteInfo(String category_id, String info_id){
         class ResponseHandler {
             public void handler(Integer statusCode) {
-                //TODO: Gestionar los errores, con un dialogo de error quiza?
                 if (statusCode==463) {
+                    dialog.dismiss();
+                    dialogError.setMessage("No se ha podido borrar, pruebe otra vez");
+                    dialogError.show();
 
+                    dialogError.setCanceledOnTouchOutside(true);
                 } else if (statusCode==403) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.show();
 
+                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 else if (statusCode==401) {
+                    dialog.dismiss();
+                    dialogError.setMessage("La sesión ha caducado, vuelva a iniciar sesión");
+                    dialogError.show();
 
+                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 else if (statusCode==200){
                     //Refrescar lista
@@ -197,6 +220,7 @@ public class Infos extends AppCompatActivity {
         }
         ResponseHandler responseHandler = new ResponseHandler();
 
+        dialogError.setCanceledOnTouchOutside(false);
         dialog.setMessage("Cargando");
         dialog.show();
         InfoService.DeleteInfo(accesToken, category_id, info_id, this,
