@@ -7,12 +7,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.ContextMenu;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,6 +39,7 @@ public class Infos extends AppCompatActivity {
     private ProgressDialog dialogError;
     private ListView lista;
     private Context ctx;
+    private PopupWindow popupWindow;
 
     /**Atributos de la clase para distinguir opciones de menú*/
     private static final int BORRAR_INFO = Menu.FIRST+1;
@@ -132,10 +139,13 @@ public class Infos extends AppCompatActivity {
                 }
                 else if (list.equals("401")) {
                     dialog.dismiss();
-                    dialogError.setMessage("La sesión ha caducado, vuelva a iniciar sesión");
+
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
+                    setContentView(R.layout.activity_log_in);
+                    logInActivity();
                 }
                 else{
                     ArrayList<Info> infos = Info.fromJson(list);
@@ -206,10 +216,12 @@ public class Infos extends AppCompatActivity {
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
-                    dialogError.setMessage("La sesión ha caducado, vuelva a iniciar sesión");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
+                    setContentView(R.layout.activity_log_in);
+                    logInActivity();
                 }
                 else if (statusCode==200){
                     //Refrescar lista
@@ -230,6 +242,12 @@ public class Infos extends AppCompatActivity {
 
     public void mainActivity() {
         Intent i = new Intent(this,Home.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void logInActivity() {
+        Intent i = new Intent(this,LogIn.class);
         startActivity(i);
         finish();
     }

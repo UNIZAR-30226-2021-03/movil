@@ -36,6 +36,7 @@ public class Welcome extends AppCompatActivity {
     private static PopupWindow popupWindow;
     private static EditText newCategoryName;
     private static ProgressDialog dialog;
+    private ProgressDialog dialogError;
     private static TextView errorAdd;
     private static ListView lista;
     private static String working_id;
@@ -193,8 +194,12 @@ public class Welcome extends AppCompatActivity {
                 }
                 else if (statusCode == 401){
                     dialog.dismiss();
-                    errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
-                    errorAdd.setVisibility(View.VISIBLE);
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                    setContentView(R.layout.activity_log_in);
+                    logInActivity();
                 }
                 else if (statusCode==200){
                     popupWindow.dismiss();
@@ -203,6 +208,8 @@ public class Welcome extends AppCompatActivity {
                 }
             }
         }
+        dialogError.setCanceledOnTouchOutside(false);
+
         String name = newCategoryName.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
 
@@ -263,8 +270,12 @@ public class Welcome extends AppCompatActivity {
                     errorAdd.setVisibility(View.VISIBLE);
                 }else if (statusCode==401) {
                     dialog.dismiss();
-                    errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
-                    errorAdd.setVisibility(View.VISIBLE);
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                    setContentView(R.layout.activity_log_in);
+                    logInActivity();
                 }
                 else if (statusCode==200){
                     popupWindow.dismiss();
@@ -273,6 +284,8 @@ public class Welcome extends AppCompatActivity {
                 }
             }
         }
+        dialogError.setCanceledOnTouchOutside(false);
+
         String name = newCategoryName.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
 
@@ -320,6 +333,12 @@ public class Welcome extends AppCompatActivity {
 
     public void mainActivity() {
         Intent i = new Intent(this,Home.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void logInActivity() {
+        Intent i = new Intent(this,LogIn.class);
         startActivity(i);
         finish();
     }
