@@ -7,6 +7,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,50 +19,31 @@ import java.util.Map;
 
 /**
  * Custom request to make multipart header and upload file.
- *
- * Sketch Project Studio
- * Created by Angga on 27/04/2016 12.05.
  */
-public class VolleyMultipartRequest extends Request<NetworkResponse> {
+public class VolleyMultipartRequest extends Request<String> {
+
     private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
     private final String boundary = "apiclient-" + System.currentTimeMillis();
 
-    private Response.Listener<NetworkResponse> mListener;
+    private final Response.Listener<String> mListener;
     private Response.ErrorListener mErrorListener;
     private Map<String, String> mHeaders;
 
     /**
      * Default constructor with predefined header and post method.
-     *
-     * @param url           request destination
+     *  @param url           request destination
      * @param headers       predefined custom header
      * @param listener      on success achieved 200 code from request
      * @param errorListener on error http or library timeout
      */
     public VolleyMultipartRequest(String url, Map<String, String> headers,
-                                  Response.Listener<NetworkResponse> listener,
+                                  Response.Listener<String> listener,
                                   Response.ErrorListener errorListener) {
         super(Method.POST, url, errorListener);
-        this.mListener = listener;
+        this.mListener=listener;
         this.mErrorListener = errorListener;
         this.mHeaders = headers;
-    }
-
-    /**
-     * Constructor with option method and default header configuration.
-     *
-     * @param method        method for now accept POST and GET only
-     * @param url           request destination
-     * @param listener      on success event handler
-     * @param errorListener on error event handler
-     */
-    public VolleyMultipartRequest(int method, String url,
-                                  Response.Listener<NetworkResponse> listener,
-                                  Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        this.mListener = listener;
-        this.mErrorListener = errorListener;
     }
 
     @Override
@@ -101,6 +84,8 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         return null;
     }
 
+
+
     /**
      * Custom method handle data payload.
      *
@@ -112,18 +97,19 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     }
 
     @Override
-    protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
+    protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try {
-            return Response.success(
-                    response,
-                    HttpHeaderParser.parseCacheHeaders(response));
-        } catch (Exception e) {
+            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            return Response.success(json, HttpHeaderParser.parseCacheHeaders(response));
+        } catch (UnsupportedEncodingException e) {
+            return Response.error(new ParseError(e));
+        } catch (JsonSyntaxException e) {
             return Response.error(new ParseError(e));
         }
     }
 
     @Override
-    protected void deliverResponse(NetworkResponse response) {
+    protected void deliverResponse(String response) {
         mListener.onResponse(response);
     }
 

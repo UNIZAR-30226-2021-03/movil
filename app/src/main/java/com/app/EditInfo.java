@@ -60,6 +60,7 @@ import java.util.List;
 import adapters.Info;
 import adapters.InfoAdapter;
 import helpers.PasswordGenerator;
+import services.AuthService;
 import services.FileService;
 import services.InfoService;
 import services.Routes;
@@ -180,6 +181,7 @@ public class EditInfo extends AppCompatActivity {
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
+                    logInActivity();
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
@@ -316,6 +318,7 @@ public class EditInfo extends AppCompatActivity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Contraseña", password.getText().toString());
         clipboard.setPrimaryClip(clip);
+        Toast.makeText(EditInfo.this,"Contraseña copiada",Toast.LENGTH_LONG).show();
     }
 
     public void logInActivity() {
@@ -358,27 +361,46 @@ public class EditInfo extends AppCompatActivity {
         if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
             Uri filepath=data.getData(); //TODO: sacar el filename
             fileName=filepath.getLastPathSegment();
-            fileName+=".jpeg";
             commitUpload(getFileDataFromUri(this, filepath));
         }
     }
 
     public void commitUpload(byte[] data){
-        commitDeleteFile(false);
-        class ResponseHandlerUpdate {
-            public void handler(Integer statusCode) {
+        Context ctx=this;
+        class ResponseHandlerUpload {
+            public void handler(Integer statusCode,String _file_id) {
                 //TODO: ERRORES
-                downloadFile.setText(fileName);
+                file_id=_file_id;
+                //downloadFile.setText(fileName+".jpg");
+                if(statusCode==200){
+                    downloadFile.setText(_file_id);
+                }else{
+                    downloadFile.setText("Error al subir el archivo");
+                }
                 dialog.dismiss();
             }
         }
-
-        ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
-
-        dialog.setMessage("Cargando");
-        dialog.show();
-        FileService.UploadFile(accessToken, category_id,info_id,data,fileName, this,
-                statusCode -> responseHandlerupdate.handler(statusCode));
+        class ResponseHandlerDelete {
+            public void handler(Integer statusCode) {
+                //TODO: Hace falta revisar errores?
+                ResponseHandlerUpload responseHandlerupdate = new ResponseHandlerUpload();
+                dialog.setMessage("Cargando");
+                dialog.show();
+                FileService.UploadFile(accessToken, category_id,info_id,data,fileName, ctx,
+                        (errorCode, _file_id) -> responseHandlerupdate.handler(errorCode,_file_id));
+            }
+        }
+        if(!file_id.equals("")) {
+            ResponseHandlerDelete responseHandlerupdate = new ResponseHandlerDelete();
+            FileService.DeleteFile(accessToken, category_id, info_id, file_id, this,
+                    statusCode -> responseHandlerupdate.handler(statusCode));
+        }else{
+            ResponseHandlerUpload responseHandlerupdate = new ResponseHandlerUpload();
+            dialog.setMessage("Cargando");
+            dialog.show();
+            FileService.UploadFile(accessToken, category_id,info_id,data,fileName, this,
+                    (errorCode, file_id) -> responseHandlerupdate.handler(errorCode,file_id));
+        }
 
     }
 
@@ -397,6 +419,7 @@ public class EditInfo extends AppCompatActivity {
     public void deleteFile(View v) {
         commitDeleteFile(true);
     }
+
     public void commitDeleteFile(Boolean loading){
         class ResponseHandlerUpdate {
             public void handler(Integer statusCode) {
@@ -404,11 +427,11 @@ public class EditInfo extends AppCompatActivity {
                 if(loading) {
                     downloadFile.setText("NO HAY ARCHIVOS SUBIDOS");
                     file_id="";
+                    System.out.println("FIN DELETE"+file_id);
                     dialog.dismiss();
                 }
             }
         }
-
         if(!file_id.equals("")) {
             ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
 
@@ -422,90 +445,44 @@ public class EditInfo extends AppCompatActivity {
     }
 
     public void downloadFile(View v) {
-      /*  if ((ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(EditInfo.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
-            } else {
-                ActivityCompat.requestPermissions(EditInfo.this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 200);
+        System.out.println("COMIENZA DOWNLOAD"+file_id);
+        class ResponseHandler {
+            public void handler(Integer statusCode) {
+                if (statusCode==403) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.show();
+                    dialogError.setCanceledOnTouchOutside(true);
+                    logInActivity();
+                }
+                else if (statusCode==401) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.show();
+                    dialogError.setCanceledOnTouchOutside(true);
+                    logInActivity();
+                }else{
+                    commitDownload();
+                }
+                System.out.println("FIN DOWNLOAD"+file_id);
             }
-        } else {
-            commitDownload();
-        }*/
-        commitDownload();
+        }
+        if(!file_id.equals("")) {
+            ResponseHandler responseHandlerupdate = new ResponseHandler();
+            AuthService.CheckSession(accessToken,
+                    this,
+                    code -> responseHandlerupdate.handler(code));
+        }
     }
     public void commitDownload() {
-        if(!file_id.equals("")) {
-            String url = Routes.rutaUploadFile + "?file_id=" + file_id;
-            CustomTabsIntent intent = constructExtraHeadersIntent(mSession);
-            intent.launchUrl(EditInfo.this, Uri.parse(url));
-        }
+        String _url = Routes.rutaUploadFile + "?file_id=" + file_id;
+
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW, Uri.parse(_url));
+        Bundle bundle = new Bundle();
+        bundle.putString("accessToken", accessToken);
+        browserIntent.putExtra(Browser.EXTRA_HEADERS, bundle);
+        startActivity(browserIntent);
     }
-
-    private CustomTabsIntent constructExtraHeadersIntent(CustomTabsSession session) {
-        CustomTabsIntent intent = new CustomTabsIntent.Builder(session).build();
-
-        // Example non-cors-whitelisted headers.
-        Bundle headers = new Bundle();
-        headers.putString("accessToken", accessToken);
-        intent.intent.putExtra(Browser.EXTRA_HEADERS, headers);
-
-        return intent;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Set up a callback that launches the intent after session was validated.
-        CustomTabsCallback callback = new CustomTabsCallback() {
-            @Override
-            public void onRelationshipValidationResult(int relation, @NonNull Uri requestedOrigin,
-                                                       boolean result, @Nullable Bundle extras) {
-                // Can launch custom tabs intent after session was validated as the same origin.
-                downloadFile.setEnabled(true);
-            }
-        };
-
-        // Set up a connection that warms up and validates a session.
-        mConnection = new CustomTabsServiceConnection() {
-            @Override
-            public void onCustomTabsServiceConnected(@NonNull ComponentName name,
-                                                     @NonNull CustomTabsClient client) {
-                // Create session after service connected.
-                mSession = client.newSession(callback);
-                client.warmup(0);
-                String url = Routes.rutaUploadFile + "?file_id=" + file_id;
-                // Validate the session as the same origin to allow cross origin headers.
-                mSession.validateRelationship(CustomTabsService.RELATION_USE_AS_ORIGIN,
-                        Uri.parse(url), null);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-            }
-        };
-
-        //Add package names for other browsers that support Custom Tabs and custom headers.
-        List<String> packageNames = Arrays.asList(
-                "com.google.android.apps.chrome",
-                "com.chrome.canary",
-                "com.chrome.dev",
-                "com.chrome.beta",
-                "com.android.chrome"
-        );
-        String packageName =
-                CustomTabsClient.getPackageName(EditInfo.this, packageNames, false);
-        if (packageName == null) {
-            Toast.makeText(getApplicationContext(), "Package name is null.", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            // Bind the custom tabs service connection.
-            CustomTabsClient.bindCustomTabsService(this, packageName, mConnection);
-        }
-
-    }
-
 
 }

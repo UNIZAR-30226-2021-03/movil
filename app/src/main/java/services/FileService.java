@@ -1,45 +1,31 @@
 package services;
 
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import android.content.ContextWrapper;
-import android.os.Environment;
+import com.google.gson.annotations.SerializedName;
+
 import android.util.Log;
 
 
-import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import helpers.InputStreamVolleyRequest;
 import helpers.VolleyMultipartRequest;
-
-import static android.content.Context.DOWNLOAD_SERVICE;
 
 
 public class FileService {
 
     public interface UploadFileCallback {
-        void onFinish(int errorCode);
+        void onFinish(int errorCode,String file_id);
     }
     public static void UploadFile(String accessToken, String category_id, String info_id, byte[] data,String filename, Context context, UploadFileCallback callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -49,22 +35,34 @@ public class FileService {
         headers.put("accessToken",accessToken);
 
 
-        VolleyMultipartRequest request = new VolleyMultipartRequest( url,headers,
-                new Response.Listener<NetworkResponse> () {
+        VolleyMultipartRequest request = new VolleyMultipartRequest(url, headers,
+                new Response.Listener<String> () {
                     @Override
-                    public void onResponse(NetworkResponse response) {
-                        callBack.onFinish(200);
+                    public void onResponse(String response) {
+                        Log.d("SERVICIO",response);
+                        System.out.println(response);
+                        JSONObject res = null;
+                        try {
+                            res = new JSONObject(response);
+                            System.out.println(res.toString());
+                        } catch (JSONException e) {
+                            callBack.onFinish(200, "");
+                        }
+                        try {
+                            callBack.onFinish(200, res.getString("file_id"));
+                        } catch (JSONException e) {
+                            callBack.onFinish(200, "");
+                        }
                     }
                 },
                 new  Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (error.networkResponse != null) {
-                            callBack.onFinish(error.networkResponse.statusCode);
+                            callBack.onFinish(error.networkResponse.statusCode,"");
                         }
-
                     }
-        }){
+            }){
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
@@ -100,21 +98,6 @@ public class FileService {
                 return params;
             }};
         requestQueue.add(request);
-    }
-
-    public interface DownloadFileCallback {
-        void onFinish(int errorCode);
-    }
-    public static void DownloadFile(String accessToken, String file_id,String file_name, Context context, DownloadFileCallback callBack) {
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accessToken",accessToken);
-
-
-
-
     }
 }
 

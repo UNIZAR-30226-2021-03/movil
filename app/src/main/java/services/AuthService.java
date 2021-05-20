@@ -7,9 +7,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.app.EditInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 ///////////////////SERVICIO PARA LAS TAREAS DE AUTENTICACIÓN///////////////////////////////
@@ -116,6 +120,30 @@ public class AuthService {
 
         requestQueue.add(request);
     }
+
+    public interface CheckSessionCallBack {
+        void onFinish(Integer code);
+    }
+    public static void CheckSession(String accessToken,Context context, final CheckSessionCallBack callBack){
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Routes.rutaCheckSession, null,
+                response -> {
+                    callBack.onFinish(200);
+                },
+                error -> {
+                    if (error.networkResponse != null) {
+                        callBack.onFinish(error.networkResponse.statusCode);
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("accessToken", accessToken);
+                return params;
+            }};
+        requestQueue.add(request);
+    }
+
 
 }
 

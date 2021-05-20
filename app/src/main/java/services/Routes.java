@@ -18,4 +18,6 @@ public class Routes {
     public static String rutaDeleteFile = "https://keypax-api.sytes.net/private/file";
     public static String rutaDownloadFile = "https://keypax-api.sytes.net/private/file";
 
+    public static String rutaCheckSession = "https://keypax-api.sytes.net/private/checksession";
+
 }

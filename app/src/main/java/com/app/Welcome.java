@@ -206,7 +206,6 @@ public class Welcome extends AppCompatActivity {
                 }
             }
         }
-        dialogError.setCanceledOnTouchOutside(false);
 
         String name = newCategoryName.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
@@ -280,7 +279,6 @@ public class Welcome extends AppCompatActivity {
                 }
             }
         }
-        dialogError.setCanceledOnTouchOutside(false);
 
         String name = newCategoryName.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();

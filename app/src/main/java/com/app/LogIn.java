@@ -105,11 +105,8 @@ public class LogIn extends AppCompatActivity {
 
         //statusCode = LogInServices.logIn(auxMail, auxPassword,this);
 
-
         dialog.setMessage("Cargando");
         dialog.show();
-
-
         AuthService.LogIn(auxMail, auxPassword,this,
                 statusCode -> {
                     // System.out.println(statusCode);
@@ -117,7 +114,7 @@ public class LogIn extends AppCompatActivity {
                     responseHandler.handler(statusCode);
                 });
 
-        //welcomeActivity("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjE1MjM2NTYsImV4cCI6MTYyMTUyNzI1Nn0.iFHftR9gdgH7H9ESOIYveGMpMbcYNxH1emDgO32S60M", "Artur");
+       //welcomeActivity("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjE1NDc5NDYsImV4cCI6MTYyMTU1MTU0Nn0.h2puxXzn63Yg66goFsU2gbXG-B7rE1__YO2obzS2Tl4", "Artur");
 
         //responseHandler.handler("200");dialog.dismiss();
     }
