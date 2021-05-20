@@ -64,6 +64,15 @@ public class Infos extends AppCompatActivity {
         setTitle(category_name);
         fillData(true);
         registerForContextMenu(lista);
+        lista.setClickable(true);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                InfoAdapter adapter = (InfoAdapter) lista.getAdapter();
+                Info inf = adapter.getInfo(position);
+                editInfo(inf);
+            }
+        });
     }
 
     /** Se llama cuando la actividad se crea por primera vez y genera un menú de opciones */
@@ -194,6 +203,8 @@ public class Infos extends AppCompatActivity {
         i.putExtra("date",info.getCreation_date());
         i.putExtra("url",info.getUrl());
         i.putExtra("description",info.getDecription());
+        i.putExtra("file_name",info.getFile_name());
+        i.putExtra("file_id",info.getFile_id());
         startActivity(i);
     }
 

@@ -15,8 +15,8 @@ public class Info {
     private String url=""; //default value
     private String decription="";
     private String creation_date;
-    private String file_id;
-    private String file_name;
+    private String file_id="";
+    private String file_name ="";
 
     public Info(JSONObject object){
         try {
@@ -31,6 +31,11 @@ public class Info {
             }
             if(object.has("decription")){
                 this.decription = object.getString("decription");
+            }
+            if(object.has("file")){
+                JSONObject aux = object.getJSONObject("file");
+                this.file_name= aux.getString("name");
+                this.file_id= aux.getString("file_id");
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,17 +1,30 @@
 package com.app;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.Browser;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -19,43 +32,51 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.content.ClipboardManager;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsClient;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.browser.customtabs.CustomTabsService;
+import androidx.browser.customtabs.CustomTabsServiceConnection;
+import androidx.browser.customtabs.CustomTabsSession;
+import androidx.browser.customtabs.CustomTabsCallback;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import adapters.Info;
 import adapters.InfoAdapter;
 import helpers.PasswordGenerator;
+import services.FileService;
 import services.InfoService;
+import services.Routes;
 
 public class EditInfo extends AppCompatActivity {
 
-    private String accesToken;
-    private String category_id;
-    private Boolean is_new;
-    private String info_id;
-    private ProgressDialog dialog;
-    private ProgressDialog dialogError;
-    private EditText name;
-    private EditText username;
-    private EditText password;
-    private EditText url;
-    private EditText description;
-    private TextView errorName;
-    private TextView errorUser;
-    private TextView errorPassword;
-    private TextView errorURL;
-    private Boolean visible=false;
+    private String accessToken,category_id,info_id,file_id,fileName;
+    private Boolean is_new,visible=false;
+    private ProgressDialog dialog,dialogError;
+    private EditText name,username,password,url,description,tamaño,specialCharacters;
+    private TextView errorName,errorUser,errorPassword,errorURL;
     private CheckBox upper,lower,numbers;
-    private EditText tamaño;
-    private EditText specialCharacters;
+    private Button downloadFile;
     private Intent i;
     private PopupWindow popupWindow;
+    private CustomTabsSession mSession;
+    private CustomTabsServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +85,7 @@ public class EditInfo extends AppCompatActivity {
         dialog = new ProgressDialog(this);
         dialogError = new ProgressDialog(this);
         i = getIntent();
-        accesToken = i.getStringExtra("accessToken");
+        accessToken = i.getStringExtra("accessToken");
         category_id = i.getStringExtra("category_id");
         is_new = i.getBooleanExtra("is_new",false);
 
@@ -73,6 +94,7 @@ public class EditInfo extends AppCompatActivity {
         password =  findViewById(R.id.password);
         url =  findViewById(R.id.url);
         description =  findViewById(R.id.description);
+        downloadFile   = findViewById(R.id.downloadFile);
         errorName = findViewById(R.id.nameError);
         errorUser = findViewById(R.id.userError);
         errorPassword = findViewById(R.id.passwordError);
@@ -93,6 +115,13 @@ public class EditInfo extends AppCompatActivity {
         password.setText(i.getStringExtra("password"));
         url.setText(i.getStringExtra("url"));
         description.setText(i.getStringExtra("description"));
+        setTitle(i.getStringExtra("name"));
+        String aux = i.getStringExtra("file_name");
+        file_id=i.getStringExtra("file_id");
+
+        if(!aux.equals("")){
+            downloadFile.setText(aux);
+        }
 
         //date.setText(i.getStringExtra("date"))
     }
@@ -195,7 +224,7 @@ public class EditInfo extends AppCompatActivity {
 
                 dialog.setMessage("Cargando");
                 dialog.show();
-                InfoService.AddInfo(accesToken, body, this,
+                InfoService.AddInfo(accessToken, body, this,
                         statusCode -> responseHandleradd.handler(statusCode));
 
             }else{
@@ -207,7 +236,7 @@ public class EditInfo extends AppCompatActivity {
 
                 dialog.setMessage("Cargando");
                 dialog.show();
-                InfoService.UpdateInfo(accesToken, body, this,
+                InfoService.UpdateInfo(accessToken, body, this,
                         statusCode -> responseHandlerupdate.handler(statusCode));
             }
         }
@@ -293,6 +322,189 @@ public class EditInfo extends AppCompatActivity {
         Intent i = new Intent(this,LogIn.class);
         startActivity(i);
         finish();
+    }
+
+
+
+    public void uploadFile (View v){
+
+        if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(EditInfo.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(EditInfo.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            } else {
+                ActivityCompat.requestPermissions(EditInfo.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
+            }
+        } else {
+            chooseFile();
+        }
+    }
+
+
+    public void chooseFile(){
+        // Construct an intent for opening a folder
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/* .pdf .txt"); //De moemnto solo parece abrir la gelería
+        startActivityForResult(Intent.createChooser(intent,"Select File"),200);
+    }
+
+    protected void onActivityResult(int requestCode,int resultCode,Intent data)
+    {
+        //Llamamos a super para informar a la clase padre que la llamada a la actividad a finalizado
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+            Uri filepath=data.getData(); //TODO: sacar el filename
+            fileName=filepath.getLastPathSegment();
+            fileName+=".jpeg";
+            commitUpload(getFileDataFromUri(this, filepath));
+        }
+    }
+
+    public void commitUpload(byte[] data){
+        commitDeleteFile(false);
+        class ResponseHandlerUpdate {
+            public void handler(Integer statusCode) {
+                //TODO: ERRORES
+                downloadFile.setText(fileName);
+                dialog.dismiss();
+            }
+        }
+
+        ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
+
+        dialog.setMessage("Cargando");
+        dialog.show();
+        FileService.UploadFile(accessToken, category_id,info_id,data,fileName, this,
+                statusCode -> responseHandlerupdate.handler(statusCode));
+
+    }
+
+    public byte[] getFileDataFromUri(Context context, Uri uri) {
+        try{
+            InputStream inputStream=getContentResolver().openInputStream(uri);
+            Bitmap bitmap= BitmapFactory.decodeStream(inputStream);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public void deleteFile(View v) {
+        commitDeleteFile(true);
+    }
+    public void commitDeleteFile(Boolean loading){
+        class ResponseHandlerUpdate {
+            public void handler(Integer statusCode) {
+                //TODO: ERRORES
+                if(loading) {
+                    downloadFile.setText("NO HAY ARCHIVOS SUBIDOS");
+                    file_id="";
+                    dialog.dismiss();
+                }
+            }
+        }
+
+        if(!file_id.equals("")) {
+            ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
+
+            if(loading) {
+                dialog.setMessage("Cargando");
+                dialog.show();
+            }
+            FileService.DeleteFile(accessToken, category_id, info_id, file_id, this,
+                    statusCode -> responseHandlerupdate.handler(statusCode));
+        }
+    }
+
+    public void downloadFile(View v) {
+      /*  if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(EditInfo.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            } else {
+                ActivityCompat.requestPermissions(EditInfo.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 200);
+            }
+        } else {
+            commitDownload();
+        }*/
+        commitDownload();
+    }
+    public void commitDownload() {
+        if(!file_id.equals("")) {
+            String url = Routes.rutaUploadFile + "?file_id=" + file_id;
+            CustomTabsIntent intent = constructExtraHeadersIntent(mSession);
+            intent.launchUrl(EditInfo.this, Uri.parse(url));
+        }
+    }
+
+    private CustomTabsIntent constructExtraHeadersIntent(CustomTabsSession session) {
+        CustomTabsIntent intent = new CustomTabsIntent.Builder(session).build();
+
+        // Example non-cors-whitelisted headers.
+        Bundle headers = new Bundle();
+        headers.putString("accessToken", accessToken);
+        intent.intent.putExtra(Browser.EXTRA_HEADERS, headers);
+
+        return intent;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Set up a callback that launches the intent after session was validated.
+        CustomTabsCallback callback = new CustomTabsCallback() {
+            @Override
+            public void onRelationshipValidationResult(int relation, @NonNull Uri requestedOrigin,
+                                                       boolean result, @Nullable Bundle extras) {
+                // Can launch custom tabs intent after session was validated as the same origin.
+                downloadFile.setEnabled(true);
+            }
+        };
+
+        // Set up a connection that warms up and validates a session.
+        mConnection = new CustomTabsServiceConnection() {
+            @Override
+            public void onCustomTabsServiceConnected(@NonNull ComponentName name,
+                                                     @NonNull CustomTabsClient client) {
+                // Create session after service connected.
+                mSession = client.newSession(callback);
+                client.warmup(0);
+                String url = Routes.rutaUploadFile + "?file_id=" + file_id;
+                // Validate the session as the same origin to allow cross origin headers.
+                mSession.validateRelationship(CustomTabsService.RELATION_USE_AS_ORIGIN,
+                        Uri.parse(url), null);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
+            }
+        };
+
+        //Add package names for other browsers that support Custom Tabs and custom headers.
+        List<String> packageNames = Arrays.asList(
+                "com.google.android.apps.chrome",
+                "com.chrome.canary",
+                "com.chrome.dev",
+                "com.chrome.beta",
+                "com.android.chrome"
+        );
+        String packageName =
+                CustomTabsClient.getPackageName(EditInfo.this, packageNames, false);
+        if (packageName == null) {
+            Toast.makeText(getApplicationContext(), "Package name is null.", Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            // Bind the custom tabs service connection.
+            CustomTabsClient.bindCustomTabsService(this, packageName, mConnection);
+        }
+
     }
 
 

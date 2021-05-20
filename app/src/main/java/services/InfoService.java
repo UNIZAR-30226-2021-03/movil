@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -30,18 +32,21 @@ public class InfoService {
                     Log.d("Response", "Success Response: " + response.toString());
                     callBack.onFinish(response);
                 },
-                error -> {
-                    if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
-                        JSONObject res = new JSONObject();
-                        try {
-                            res.put("statuscode",String.valueOf(error.networkResponse.statusCode));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse != null) {
+                            Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                            JSONObject res = new JSONObject();
+                            try {
+                                res.put("statuscode", String.valueOf(error.networkResponse.statusCode));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            JSONArray out = new JSONArray();
+                            out.put(res);
+                            callBack.onFinish(out);
                         }
-                        JSONArray out = new JSONArray();
-                        out.put(res);
-                        callBack.onFinish(out);
                     }
                 }){
             @Override

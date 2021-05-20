@@ -14,4 +14,8 @@ public class Routes {
     public static String rutaAddInfo = "https://keypax-api.sytes.net/private/info";
     public static String rutaUpdateInfo = "https://keypax-api.sytes.net/private/info";
 
+    public static String rutaUploadFile = "https://keypax-api.sytes.net/private/file";
+    public static String rutaDeleteFile = "https://keypax-api.sytes.net/private/file";
+    public static String rutaDownloadFile = "https://keypax-api.sytes.net/private/file";
+
 }

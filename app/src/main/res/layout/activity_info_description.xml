@@ -154,6 +154,43 @@
                 android:background="@drawable/layout_screen_info" />
         </LinearLayout>
 
+        <LinearLayout android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+
+            <Button
+                android:id="@+id/downloadFile"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/buttons"
+                android:drawableEnd="@android:drawable/stat_sys_download"
+                android:onClick="downloadFile"
+                android:text="No hay archivos subidos"
+                android:textColor="@color/background" />
+
+            <ImageButton
+                android:id="@+id/deleteFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:onClick="deleteFile"
+                app:srcCompat="@android:drawable/ic_menu_delete" />
+        </LinearLayout>
+
+           <Button
+               android:id="@+id/uploadFile"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center"
+               android:backgroundTint="@color/buttons"
+               android:drawableEnd="@android:drawable/ic_menu_upload_you_tube"
+               android:onClick="uploadFile"
+               android:text="SUBIR ARCHIVO"
+               android:textColor="@color/background" />
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"/>

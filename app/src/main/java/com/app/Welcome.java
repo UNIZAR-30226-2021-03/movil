@@ -334,6 +334,7 @@ public class Welcome extends AppCompatActivity {
     }
 
     public void logInActivity() {
+        //TODO : CREO QUE NO VA....
         Intent i = new Intent(this,LogIn.class);
         startActivity(i);
         finish();
