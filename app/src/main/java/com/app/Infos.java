@@ -144,7 +144,6 @@ public class Infos extends AppCompatActivity {
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
-                    setContentView(R.layout.activity_log_in);
                     logInActivity();
                 }
                 else{
@@ -220,7 +219,6 @@ public class Infos extends AppCompatActivity {
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
-                    setContentView(R.layout.activity_log_in);
                     logInActivity();
                 }
                 else if (statusCode==200){

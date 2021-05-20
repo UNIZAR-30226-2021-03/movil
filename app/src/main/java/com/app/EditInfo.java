@@ -40,11 +40,16 @@ public class EditInfo extends AppCompatActivity {
     private Boolean is_new;
     private String info_id;
     private ProgressDialog dialog;
+    private ProgressDialog dialogError;
     private EditText name;
     private EditText username;
     private EditText password;
     private EditText url;
     private EditText description;
+    private TextView errorName;
+    private TextView errorUser;
+    private TextView errorPassword;
+    private TextView errorURL;
     private Boolean visible=false;
     private CheckBox upper,lower,numbers;
     private EditText tamaño;
@@ -57,6 +62,7 @@ public class EditInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_description);
         dialog = new ProgressDialog(this);
+        dialogError = new ProgressDialog(this);
         i = getIntent();
         accesToken = i.getStringExtra("accessToken");
         category_id = i.getStringExtra("category_id");
@@ -67,6 +73,11 @@ public class EditInfo extends AppCompatActivity {
         password =  findViewById(R.id.password);
         url =  findViewById(R.id.url);
         description =  findViewById(R.id.description);
+        errorName = findViewById(R.id.nameError);
+        errorUser = findViewById(R.id.userError);
+        errorPassword = findViewById(R.id.passwordError);
+        errorURL = findViewById(R.id.urlError);
+
 
         if(!is_new){
             info_id = i.getStringExtra("info_id");
@@ -88,7 +99,6 @@ public class EditInfo extends AppCompatActivity {
 
     public void saveInfo(View view) {
         String _name,_username,_password,_url,_description;
-        //TODO : Sacar errores si los campos no son correctos y no avanzar (nombre,username y password no vacío) y URL es url
         _name = name.getText().toString();
         _username = username.getText().toString();
         _password = password.getText().toString();
@@ -107,37 +117,102 @@ public class EditInfo extends AppCompatActivity {
 
         class ResponseHandlerAdd {
             public void handler(Integer statusCode) {
-                //TODO: Gestionar los errores, con un dialogo de error quiza?
+                if (statusCode==403) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
+                else if (statusCode==401) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                    logInActivity();
+                }
+                else if (statusCode==462){
+                    dialog.dismiss();
+                    dialogError.setMessage("No se ha podido crear la contraseña");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
                 dialog.dismiss();
                 finish();
             }
         }
         class ResponseHandlerUpdate {
             public void handler(Integer statusCode) {
-                //TODO: Gestionar los errores, con un dialogo de error quiza?
+                if (statusCode==403) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
+                else if (statusCode==401) {
+                    dialog.dismiss();
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                    logInActivity();
+                }
+                else if (statusCode==464){
+                    dialog.dismiss();
+                    dialogError.setMessage("No se ha podido actualizar la contraseña");
+                    dialogError.show();
+
+                    dialogError.setCanceledOnTouchOutside(true);
+                }
                 dialog.dismiss();
                 finish();
             }
         }
-        if(is_new) {
-            ResponseHandlerAdd responseHandleradd = new ResponseHandlerAdd();
-
-            dialog.setMessage("Cargando");
-            dialog.show();
-            InfoService.AddInfo(accesToken, body, this,
-                    statusCode -> responseHandleradd.handler(statusCode));
-
-        }else{
-            try {
-                body.put("info_id",info_id);
-            } catch (JSONException e) {}
-            ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
-
-            dialog.setMessage("Cargando");
-            dialog.show();
-            InfoService.UpdateInfo(accesToken, body, this,
-                    statusCode -> responseHandlerupdate.handler(statusCode));
+        if(_name.equals("")){
+            //Nombre vacio
+            errorName.setVisibility(View.VISIBLE);
         }
+        else if(_username.equals("")){
+            //Usuario vacio
+            errorUser.setVisibility(View.VISIBLE);
+        }
+        else if(_password.equals("")){
+            //Contraseña vacio
+            errorPassword.setVisibility(View.VISIBLE);
+        }
+        else if(!android.util.Patterns.WEB_URL.matcher(_url).matches()){
+            errorURL.setVisibility(View.VISIBLE);
+        }
+        else{
+
+            //Los campos no son vacios
+            if(is_new) {
+                dialogError.setCanceledOnTouchOutside(false);
+                ResponseHandlerAdd responseHandleradd = new ResponseHandlerAdd();
+
+                dialog.setMessage("Cargando");
+                dialog.show();
+                InfoService.AddInfo(accesToken, body, this,
+                        statusCode -> responseHandleradd.handler(statusCode));
+
+            }else{
+                try {
+                    body.put("info_id",info_id);
+                } catch (JSONException e) {}
+                dialogError.setCanceledOnTouchOutside(false);
+                ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
+
+                dialog.setMessage("Cargando");
+                dialog.show();
+                InfoService.UpdateInfo(accesToken, body, this,
+                        statusCode -> responseHandlerupdate.handler(statusCode));
+            }
+        }
+
+
     }
 
     //Para el botón de atrás
@@ -212,6 +287,12 @@ public class EditInfo extends AppCompatActivity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Contraseña", password.getText().toString());
         clipboard.setPrimaryClip(clip);
+    }
+
+    public void logInActivity() {
+        Intent i = new Intent(this,LogIn.class);
+        startActivity(i);
+        finish();
     }
 
 

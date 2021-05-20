@@ -31,6 +31,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/layout_screen_info"/>
         </LinearLayout>
+           <TextView
+               android:id="@+id/nameError"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="*Obligatorio"
+               android:layout_gravity="right"
+               android:visibility="invisible"
+               android:textColor="@color/error"/>
         <TextView
             android:layout_width="77dp"
             android:layout_height="wrap_content"
@@ -47,6 +55,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/layout_screen_info"/>
         </LinearLayout>
+           <TextView
+               android:id="@+id/userError"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="*Obligatorio"
+               android:layout_gravity="right"
+               android:visibility="invisible"
+               android:textColor="@color/error"/>
         <TextView
             android:layout_width="77dp"
             android:layout_height="wrap_content"
@@ -71,15 +87,24 @@
                 android:layout_alignParentRight="true"
                 android:onClick="copyPassword"
                 app:srcCompat="?attr/actionModeCopyDrawable" />
+
             <ImageButton
                 android:id="@+id/showPassword"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:onClick="setVisible"
                 app:srcCompat="@android:drawable/ic_menu_view" />
 
         </LinearLayout>
+           <TextView
+               android:id="@+id/passwordError"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="*Obligatorio"
+               android:layout_gravity="right"
+               android:visibility="invisible"
+               android:textColor="@color/error"/>
            <Button
                android:id="@+id/generatePassword"
                android:layout_width="wrap_content"
@@ -105,6 +130,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/layout_screen_info" />
         </LinearLayout>
+           <TextView
+               android:id="@+id/urlError"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="*URL incorrecta"
+               android:layout_gravity="right"
+               android:visibility="invisible"
+               android:textColor="@color/error"/>
         <TextView
             android:layout_width="77dp"
             android:layout_height="wrap_content"

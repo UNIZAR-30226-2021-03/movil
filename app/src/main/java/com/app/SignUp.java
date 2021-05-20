@@ -26,6 +26,10 @@ public class SignUp extends AppCompatActivity {
     private EditText confirmPassword;
     private TextView errorConfirm;
     private ProgressDialog dialog;
+    private String auxApodo;
+    private String auxMail;
+    private String auxPassword;
+    private String auxConfirmPassword;
 
 
     @Override
@@ -60,16 +64,18 @@ public class SignUp extends AppCompatActivity {
                     errorConfirm.setText("*Server error");
                     errorConfirm.setVisibility(View.VISIBLE);
                 } else {
+
+
                     // inflate the layout of the popup window
                     LayoutInflater inflater = (LayoutInflater)
                             getSystemService(LAYOUT_INFLATER_SERVICE);
                     View popupView = inflater.inflate(R.layout.popup_verification, null);
-
                     // create the popup window
                     int width = LinearLayout.LayoutParams.WRAP_CONTENT;
                     int height = LinearLayout.LayoutParams.WRAP_CONTENT;
                     boolean focusable = true; // lets taps outside the popup also dismiss it
                     final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+                    ((TextView)popupWindow.getContentView().findViewById(R.id.mailVerification)).setText(auxMail);
 
                     // show the popup window
                     // which view you pass in doesn't matter, it is only used for the window tolken
@@ -80,7 +86,7 @@ public class SignUp extends AppCompatActivity {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             popupWindow.dismiss();
-                            setContentView(R.layout.activity_log_in);
+                            logInActivity();
                             return true;
                         }
                     });
@@ -90,10 +96,10 @@ public class SignUp extends AppCompatActivity {
 
         errorConfirm.setVisibility(View.GONE);
 
-        String auxApodo = apodo.getText().toString();
-        String auxMail = mail.getText().toString();
-        String auxPassword = password.getText().toString();
-        String auxConfirmPassword = confirmPassword.getText().toString();
+        auxApodo = apodo.getText().toString();
+        auxMail = mail.getText().toString();
+        auxPassword = password.getText().toString();
+        auxConfirmPassword = confirmPassword.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
 
         if(auxPassword.equals(auxConfirmPassword)){
@@ -110,5 +116,11 @@ public class SignUp extends AppCompatActivity {
             errorConfirm.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    public void logInActivity() {
+        Intent i = new Intent(this,LogIn.class);
+        startActivity(i);
+        finish();
     }
 }

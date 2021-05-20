@@ -169,7 +169,6 @@ public class Welcome extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 popupWindow.dismiss();
-                setContentView(R.layout.activity_welcome);
                 return true;
             }
         });
@@ -198,7 +197,6 @@ public class Welcome extends AppCompatActivity {
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
-                    setContentView(R.layout.activity_log_in);
                     logInActivity();
                 }
                 else if (statusCode==200){
@@ -246,7 +244,6 @@ public class Welcome extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 popupWindow.dismiss();
-                setContentView(R.layout.activity_welcome);
                 return true;
             }
         });
@@ -274,7 +271,6 @@ public class Welcome extends AppCompatActivity {
                     dialogError.show();
 
                     dialogError.setCanceledOnTouchOutside(true);
-                    setContentView(R.layout.activity_log_in);
                     logInActivity();
                 }
                 else if (statusCode==200){

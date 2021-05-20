@@ -40,7 +40,15 @@
             android:textSize="22sp"
             android:gravity="center_horizontal"
             android:layout_gravity="center"
-            android:text="Se ha enviado al correo:\nexample@gmail.com"
+            android:text="Se ha enviado al correo:"
+            android:textColor="@color/buttons"/>
+        <TextView
+            android:id="@+id/mail2fa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text=""
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/buttons"/>
         <LinearLayout
             android:layout_width="wrap_content"

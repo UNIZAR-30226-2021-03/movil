@@ -24,7 +24,15 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:gravity="center_horizontal"
-            android:text="Vaya a su bandeja de entrada para confirmar la dirección de correo:\nexample@gmail.com"
+            android:text="Vaya a su bandeja de entrada para confirmar la dirección de correo:"
+            android:textColor="@color/buttons"/>
+        <TextView
+            android:id="@+id/mailVerification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text=""
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/buttons"/>
         <TextView
             android:layout_width="match_parent"

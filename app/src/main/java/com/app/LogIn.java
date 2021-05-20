@@ -28,6 +28,8 @@ public class LogIn extends AppCompatActivity {
     private TextView errorCode;
     private PopupWindow popupWindow;
     private ProgressDialog dialog;
+    private String auxMail;
+    private String auxPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class LogIn extends AppCompatActivity {
                     int height = LinearLayout.LayoutParams.WRAP_CONTENT;
                     boolean focusable = true; // lets taps outside the popup also dismiss it
                     popupWindow = new PopupWindow(popupView, width, height, focusable);
+                    ((TextView)popupWindow.getContentView().findViewById(R.id.mail2fa)).setText(auxMail);
 
                     // show the popup window
                     // which view you pass in doesn't matter, it is only used for the window tolken
@@ -86,7 +89,6 @@ public class LogIn extends AppCompatActivity {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             popupWindow.dismiss();
-                            setContentView(R.layout.activity_log_in);
                             return true;
                         }
                     });
@@ -97,12 +99,11 @@ public class LogIn extends AppCompatActivity {
 
         //statusCode = LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
 
-        String auxMail = mail.getText().toString();
-        String auxPassword = password.getText().toString();
+        auxMail = mail.getText().toString();
+        auxPassword = password.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
 
         //statusCode = LogInServices.logIn(auxMail, auxPassword,this);
-
 
 
         dialog.setMessage("Cargando");
