@@ -112,7 +112,6 @@ public final class PasswordGenerator {
         if (length <= 0) {
             return "";
         }
-
         // Variables.
         StringBuilder password = new StringBuilder(length);
         Random random = new Random(System.nanoTime());
@@ -128,13 +127,17 @@ public final class PasswordGenerator {
         if (useDigits) {
             charCategories.add(DIGITS);
         }if (useSpecial) {
-            charCategories.add(SPECIAL);
+            if (!SPECIAL.equals("")) {
+                charCategories.add(SPECIAL);
+            }
         }
 
         // Build the password.
         for (int i = 0; i < length; i++) {
             String charCategory = charCategories.get(random.nextInt(charCategories.size()));
+
             int position = random.nextInt(charCategory.length());
+
             password.append(charCategory.charAt(position));
         }
         return new String(password);

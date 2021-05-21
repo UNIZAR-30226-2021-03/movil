@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.Browser;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -71,14 +73,12 @@ public class EditInfo extends AppCompatActivity {
     private String accessToken,category_id,info_id,file_id,fileName;
     private Boolean is_new,visible=false;
     private ProgressDialog dialog,dialogError;
-    private EditText name,username,password,url,description,tamaño,specialCharacters;
+    private EditText name,username,password,url,description,tamanyo,specialCharacters;
     private TextView errorName,errorUser,errorPassword,errorURL, entropiaText;
     private CheckBox upper,lower,numbers;
     private Button downloadFile;
     private Intent i;
     private PopupWindow popupWindow;
-    private CustomTabsSession mSession;
-    private CustomTabsServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +104,24 @@ public class EditInfo extends AppCompatActivity {
         entropiaText = findViewById(R.id.entropia);
         entropiaText.setVisibility(View.GONE);
 
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                calcEntropy(s.toString());
+            }
+        });
+
         if(!is_new){
             info_id = i.getStringExtra("info_id");
             fillData(true);
         }
+
 
     }
 
@@ -266,58 +280,15 @@ public class EditInfo extends AppCompatActivity {
         use_numbers = numbers.isChecked();
         specials = specialCharacters.getText().toString();
 
-        tmp=tamaño.getText().toString();
+        tmp=tamanyo.getText().toString();
         if(!tmp.equals("")){tam=Integer.parseInt(tmp);}
 
         PasswordGenerator generator = new PasswordGenerator.PasswordGeneratorBuilder()
                 .useDigits(use_numbers).useLower(use_lower).useUpper(use_upper).useSpecial(specials).build();
+
         String generated = generator.generate(tam);
         password.setText(generated);
-
-        //Calculo de entropía
-        double entropiaTotal = 0.0;
-        System.out.println("ENTROPIAAA");
-        if(use_numbers && !use_lower && !use_upper && specials.equals("")){
-            entropiaTotal = 3.32 * generated.length();
-        }
-        else if(!use_numbers && use_lower && !use_upper && specials.equals("")){
-            entropiaTotal = 4.47 * generated.length();
-        }
-        else if(use_numbers && use_lower && use_upper && specials.equals("")){
-            entropiaTotal = 5.95 * generated.length();
-        }
-        else if(use_numbers && use_lower && use_upper && !specials.equals("")){
-            entropiaTotal = 6.55 * generated.length();
-        }
-
-        //Valoración entropía
-        if(entropiaTotal<28){
-            entropiaText.setText("Muy débil");
-            entropiaText.setTextColor(R.color.error);
-            entropiaText.setVisibility(View.VISIBLE);
-        }
-        else if(entropiaTotal>=28 && entropiaTotal<36){
-            entropiaText.setText("Débil");
-            entropiaText.setTextColor(R.color.debil);
-            entropiaText.setVisibility(View.VISIBLE);
-        }
-        else if(entropiaTotal>=36 && entropiaTotal<60){
-            entropiaText.setText("Razonable");
-            entropiaText.setTextColor(R.color.razonable);
-            entropiaText.setVisibility(View.VISIBLE);
-        }
-        else if(entropiaTotal>=60 && entropiaTotal<128){
-            entropiaText.setText("Segura");
-            entropiaText.setTextColor(R.color.segura);
-            entropiaText.setVisibility(View.VISIBLE);
-        }
-        else if(entropiaTotal>=128){
-            entropiaText.setText("Muy segura");
-            entropiaText.setTextColor(R.color.muySegura);
-            entropiaText.setVisibility(View.VISIBLE);
-        }
-
-
+        calcEntropy(generated);
         popupWindow.dismiss();
     }
 
@@ -327,7 +298,7 @@ public class EditInfo extends AppCompatActivity {
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_generate_password, null);
 
-        tamaño = (EditText) popupView.findViewById(R.id.tamanyo);
+        tamanyo = (EditText) popupView.findViewById(R.id.tamanyo);
         specialCharacters = (EditText) popupView.findViewById(R.id.specialCharacters);
         upper = (CheckBox) popupView.findViewById(R.id.upper);
         lower = (CheckBox) popupView.findViewById(R.id.lower);
@@ -394,7 +365,6 @@ public class EditInfo extends AppCompatActivity {
             chooseFile();
         }
     }
-
 
     public void chooseFile(){
         // Construct an intent for opening a folder
@@ -532,6 +502,52 @@ public class EditInfo extends AppCompatActivity {
         bundle.putString("accessToken", accessToken);
         browserIntent.putExtra(Browser.EXTRA_HEADERS, bundle);
         startActivity(browserIntent);
+    }
+
+    private void calcEntropy(String _password){
+
+        int alphabetLength = 0;
+        if(!_password.equals(_password.toLowerCase())){alphabetLength+=26;}
+        if(!_password.equals(_password.toUpperCase())){alphabetLength+=26;}
+        if(_password.matches("[0-9]+")){alphabetLength+=10;}
+        for (int i = 0; i < _password.length(); i++) {
+            if (_password.substring(i, i+1).matches("[^A-Za-z0-9]")) {
+                alphabetLength++;
+            }
+        }
+
+        double entropy = _password.length()* Math.log(alphabetLength)/Math.log(2);
+        entropy=Math.floor(entropy);
+        entropiaText.setText("Entropía: "+String.valueOf((int)entropy));
+        //Valoración entropía
+        if(entropy<28){
+           // entropiaText.setText("Muy débil");
+
+            entropiaText.setTextColor(getResources().getColor(R.color.error));
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropy>=28 && entropy<36){
+           // entropiaText.setText("Débil");
+            entropiaText.setTextColor(getResources().getColor(R.color.debil));
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropy>=36 && entropy<60){
+           // entropiaText.setText("Razonable");
+            entropiaText.setTextColor(getResources().getColor(R.color.razonable));
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropy>=60 && entropy<128){
+            //entropiaText.setText("Segura");
+            entropiaText.setTextColor(getResources().getColor(R.color.segura));
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropy>=128){
+            //entropiaText.setText("Muy segura");
+            entropiaText.setTextColor(getResources().getColor(R.color.muySegura));
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+
+
     }
 
 }
