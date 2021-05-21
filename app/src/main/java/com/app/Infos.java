@@ -1,8 +1,10 @@
 package com.app;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -36,7 +38,7 @@ public class Infos extends AppCompatActivity {
     private String category_id;
     private String category_name;
     private ProgressDialog dialog;
-    private ProgressDialog dialogError;
+    private AlertDialog.Builder dialogError;
     private ListView lista;
     private Context ctx;
     private PopupWindow popupWindow;
@@ -52,7 +54,7 @@ public class Infos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infos);
         dialog = new ProgressDialog(this);
-        dialogError = new ProgressDialog(this);
+        dialogError = new AlertDialog.Builder(this);
         Intent i = getIntent();
         accesToken = i.getStringExtra("accessToken");
         category_id = i.getStringExtra("category_id");
@@ -141,19 +143,31 @@ public class Infos extends AppCompatActivity {
             public void handler(JSONArray list) {
                 if (list.equals("403")) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 else if (list.equals("401")) {
                     dialog.dismiss();
 
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else{
                     ArrayList<Info> infos = Info.fromJson(list);
@@ -164,7 +178,6 @@ public class Infos extends AppCompatActivity {
             }
         }
 
-        dialogError.setCanceledOnTouchOutside(false);
         ResponseHandler responseHandler = new ResponseHandler();
         if(delay) {
             dialog.setMessage("Cargando");
@@ -213,24 +226,43 @@ public class Infos extends AppCompatActivity {
             public void handler(Integer statusCode) {
                 if (statusCode==463) {
                     dialog.dismiss();
-                    dialogError.setMessage("No se ha podido borrar, pruebe otra vez");
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("No se ha podido borrar la contraseña");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 } else if (statusCode==403) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==200){
                     //Refrescar lista
@@ -241,7 +273,6 @@ public class Infos extends AppCompatActivity {
         }
         ResponseHandler responseHandler = new ResponseHandler();
 
-        dialogError.setCanceledOnTouchOutside(false);
         dialog.setMessage("Cargando");
         dialog.show();
         InfoService.DeleteInfo(accesToken, category_id, info_id, this,

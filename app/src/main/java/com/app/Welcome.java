@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -37,7 +38,7 @@ public class Welcome extends AppCompatActivity {
     private static PopupWindow popupWindow;
     private static EditText newCategoryName;
     private static ProgressDialog dialog;
-    private AlertDialog dialogError;
+    private AlertDialog.Builder dialogError;
     private static TextView errorAdd;
     private static ListView lista;
     private static String working_id;
@@ -55,7 +56,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         dialog = new ProgressDialog(this);
-        AlertDialog.Builder dialogError = new AlertDialog.Builder(this);
+        dialogError = new AlertDialog.Builder(this);
         i = getIntent();
         accesTokenWelcome = i.getStringExtra("accessToken");
         nickname = i.getStringExtra("nickname");
@@ -195,11 +196,18 @@ public class Welcome extends AppCompatActivity {
                 }
                 else if (statusCode == 401){
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                            popupWindow.dismiss();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==200){
                     popupWindow.dismiss();
@@ -268,11 +276,18 @@ public class Welcome extends AppCompatActivity {
                     errorAdd.setVisibility(View.VISIBLE);
                 }else if (statusCode==401) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                            popupWindow.dismiss();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==200){
                     popupWindow.dismiss();
@@ -306,8 +321,18 @@ public class Welcome extends AppCompatActivity {
                     errorAdd.setVisibility(View.VISIBLE);
                 }
                 else if (statusCode==401) {
-                    errorAdd.setText("*La sesión ha caducado, vuelva a iniciar sesión");
-                    errorAdd.setVisibility(View.VISIBLE);
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                            popupWindow.dismiss();
+                        }
+                    });
+                    dialogError.show();
                 }
                 else if (statusCode==200){
                     //Refrescar lista

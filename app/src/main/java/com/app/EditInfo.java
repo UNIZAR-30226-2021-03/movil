@@ -3,12 +3,14 @@ package com.app;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -72,7 +74,8 @@ public class EditInfo extends AppCompatActivity {
 
     private String accessToken,category_id,info_id,file_id,fileName;
     private Boolean is_new,visible=false;
-    private ProgressDialog dialog,dialogError;
+    private ProgressDialog dialog;
+    private AlertDialog.Builder dialogError;
     private EditText name,username,password,url,description,tamanyo,specialCharacters;
     private TextView errorName,errorUser,errorPassword,errorURL, entropiaText;
     private CheckBox upper,lower,numbers;
@@ -85,7 +88,7 @@ public class EditInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_description);
         dialog = new ProgressDialog(this);
-        dialogError = new ProgressDialog(this);
+        dialogError = new AlertDialog.Builder(this);
         i = getIntent();
         accessToken = i.getStringExtra("accessToken");
         category_id = i.getStringExtra("category_id");
@@ -165,25 +168,43 @@ public class EditInfo extends AppCompatActivity {
             public void handler(Integer statusCode) {
                 if (statusCode==403) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==462){
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("No se ha podido crear la contraseña");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 dialog.dismiss();
                 finish();
@@ -193,26 +214,43 @@ public class EditInfo extends AppCompatActivity {
             public void handler(Integer statusCode) {
                 if (statusCode==403) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==464){
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("No se ha podido actualizar la contraseña");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-
-                    dialogError.setCanceledOnTouchOutside(true);
                 }
                 dialog.dismiss();
                 finish();
@@ -237,7 +275,6 @@ public class EditInfo extends AppCompatActivity {
 
             //Los campos no son vacios
             if(is_new) {
-                dialogError.setCanceledOnTouchOutside(false);
                 ResponseHandlerAdd responseHandleradd = new ResponseHandlerAdd();
 
                 dialog.setMessage("Cargando");
@@ -249,7 +286,6 @@ public class EditInfo extends AppCompatActivity {
                 try {
                     body.put("info_id",info_id);
                 } catch (JSONException e) {}
-                dialogError.setCanceledOnTouchOutside(false);
                 ResponseHandlerUpdate responseHandlerupdate = new ResponseHandlerUpdate();
 
                 dialog.setMessage("Cargando");
@@ -469,17 +505,30 @@ public class EditInfo extends AppCompatActivity {
             public void handler(Integer statusCode) {
                 if (statusCode==403) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
                     dialogError.show();
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }
                 else if (statusCode==401) {
                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            logInActivity();
+                        }
+                    });
                     dialogError.show();
-                    dialogError.setCanceledOnTouchOutside(true);
-                    logInActivity();
                 }else{
                     commitDownload();
                 }
