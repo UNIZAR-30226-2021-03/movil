@@ -8,6 +8,10 @@
     <color name="textColor">#43B0F1</color>
     <color name="error">#FE0000</color>
     <color name="newCategory">#FFDF00</color>
+    <color name="debil">#FF8000</color>
+    <color name="razonable">#EDEF00</color>
+    <color name="segura">#98FF98</color>
+    <color name="muySegura">#008F39</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

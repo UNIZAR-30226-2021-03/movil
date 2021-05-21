@@ -71,7 +71,7 @@
         <LinearLayout android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="7dp">
             <EditText
                 android:id="@+id/password"
                 android:layout_width="0dp"
@@ -103,8 +103,15 @@
                android:layout_height="wrap_content"
                android:text="*Obligatorio"
                android:layout_gravity="right"
+               android:textColor="@color/error"
+               android:visibility="invisible" />
+           <TextView
+               android:id="@+id/entropia"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
                android:visibility="invisible"
                android:textColor="@color/error"/>
+
            <Button
                android:id="@+id/generatePassword"
                android:layout_width="wrap_content"

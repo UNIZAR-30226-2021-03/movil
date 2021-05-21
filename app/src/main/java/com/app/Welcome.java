@@ -1,6 +1,7 @@
 package com.app;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +37,7 @@ public class Welcome extends AppCompatActivity {
     private static PopupWindow popupWindow;
     private static EditText newCategoryName;
     private static ProgressDialog dialog;
-    private ProgressDialog dialogError;
+    private AlertDialog dialogError;
     private static TextView errorAdd;
     private static ListView lista;
     private static String working_id;
@@ -54,6 +55,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         dialog = new ProgressDialog(this);
+        AlertDialog.Builder dialogError = new AlertDialog.Builder(this);
         i = getIntent();
         accesTokenWelcome = i.getStringExtra("accessToken");
         nickname = i.getStringExtra("nickname");

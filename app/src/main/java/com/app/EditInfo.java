@@ -1,6 +1,7 @@
 package com.app;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -71,7 +72,7 @@ public class EditInfo extends AppCompatActivity {
     private Boolean is_new,visible=false;
     private ProgressDialog dialog,dialogError;
     private EditText name,username,password,url,description,tamaño,specialCharacters;
-    private TextView errorName,errorUser,errorPassword,errorURL;
+    private TextView errorName,errorUser,errorPassword,errorURL, entropiaText;
     private CheckBox upper,lower,numbers;
     private Button downloadFile;
     private Intent i;
@@ -100,7 +101,8 @@ public class EditInfo extends AppCompatActivity {
         errorUser = findViewById(R.id.userError);
         errorPassword = findViewById(R.id.passwordError);
         errorURL = findViewById(R.id.urlError);
-
+        entropiaText = findViewById(R.id.entropia);
+        entropiaText.setVisibility(View.GONE);
 
         if(!is_new){
             info_id = i.getStringExtra("info_id");
@@ -253,6 +255,7 @@ public class EditInfo extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("ResourceAsColor")
     public void commitGenerate(View v){
         Boolean use_upper,use_lower,use_numbers;
         int tam=10;
@@ -270,6 +273,51 @@ public class EditInfo extends AppCompatActivity {
                 .useDigits(use_numbers).useLower(use_lower).useUpper(use_upper).useSpecial(specials).build();
         String generated = generator.generate(tam);
         password.setText(generated);
+
+        //Calculo de entropía
+        double entropiaTotal = 0.0;
+        System.out.println("ENTROPIAAA");
+        if(use_numbers && !use_lower && !use_upper && specials.equals("")){
+            entropiaTotal = 3.32 * generated.length();
+        }
+        else if(!use_numbers && use_lower && !use_upper && specials.equals("")){
+            entropiaTotal = 4.47 * generated.length();
+        }
+        else if(use_numbers && use_lower && use_upper && specials.equals("")){
+            entropiaTotal = 5.95 * generated.length();
+        }
+        else if(use_numbers && use_lower && use_upper && !specials.equals("")){
+            entropiaTotal = 6.55 * generated.length();
+        }
+
+        //Valoración entropía
+        if(entropiaTotal<28){
+            entropiaText.setText("Muy débil");
+            entropiaText.setTextColor(R.color.error);
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropiaTotal>=28 && entropiaTotal<36){
+            entropiaText.setText("Débil");
+            entropiaText.setTextColor(R.color.debil);
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropiaTotal>=36 && entropiaTotal<60){
+            entropiaText.setText("Razonable");
+            entropiaText.setTextColor(R.color.razonable);
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropiaTotal>=60 && entropiaTotal<128){
+            entropiaText.setText("Segura");
+            entropiaText.setTextColor(R.color.segura);
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+        else if(entropiaTotal>=128){
+            entropiaText.setText("Muy segura");
+            entropiaText.setTextColor(R.color.muySegura);
+            entropiaText.setVisibility(View.VISIBLE);
+        }
+
+
         popupWindow.dismiss();
     }
 
@@ -320,6 +368,7 @@ public class EditInfo extends AppCompatActivity {
         clipboard.setPrimaryClip(clip);
         Toast.makeText(EditInfo.this,"Contraseña copiada",Toast.LENGTH_LONG).show();
     }
+
 
     public void logInActivity() {
         Intent i = new Intent(this,LogIn.class);
