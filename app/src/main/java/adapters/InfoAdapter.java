@@ -7,9 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.app.R;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class InfoAdapter extends ArrayAdapter<Info> {
 
@@ -44,4 +47,11 @@ public class InfoAdapter extends ArrayAdapter<Info> {
         return inf;
     }
 
+    public void notifyDataSetChanged(@NonNull Comparator<? super Info> comparator) {
+        this.setNotifyOnChange(false);
+
+        this.sort(comparator);
+
+        this.setNotifyOnChange(true);
+    }
 }

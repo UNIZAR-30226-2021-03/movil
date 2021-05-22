@@ -20,6 +20,21 @@
             android:text="+ AÑADIR CONTRASEÑA"
             android:onClick="addInfo"
             android:backgroundTint="@color/newCategory" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ordenar por: "
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/order_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
         <ListView
             android:id="@+id/list_infos"
             android:layout_width="wrap_content"

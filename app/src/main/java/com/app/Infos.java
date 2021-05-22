@@ -16,10 +16,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,18 +32,22 @@ import java.util.ArrayList;
 
 import adapters.Info;
 import adapters.InfoAdapter;
+import adapters.InfoComparatorDate;
+import adapters.InfoComparatorName;
 import services.InfoService;
 
 public class Infos extends AppCompatActivity {
 
     private String accesToken;
     private String category_id;
-    private String category_name;
+    private String category_name,ordenActual;
     private ProgressDialog dialog;
     private AlertDialog.Builder dialogError;
     private ListView lista;
     private Context ctx;
     private PopupWindow popupWindow;
+    private  Spinner orden;
+    private ArrayList<Info> infos;
 
     /**Atributos de la clase para distinguir opciones de menú*/
     private static final int BORRAR_INFO = Menu.FIRST+1;
@@ -62,10 +68,10 @@ public class Infos extends AppCompatActivity {
 
         lista = findViewById(R.id.list_infos);
         ctx = this;
+        ordenActual="Nombre";
 
         setTitle(category_name);
-        fillData(true);
-        registerForContextMenu(lista);
+
         lista.setClickable(true);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,6 +81,32 @@ public class Infos extends AppCompatActivity {
                 editInfo(inf);
             }
         });
+        orden = (Spinner) findViewById(R.id.order_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.politicas_orden, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        orden.setAdapter(adapter);
+
+        //Función listener para cuando se selecciona una opción de orden en el spinner
+        orden.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch(orden.getSelectedItem().toString()){
+                    case "Nombre":
+                        ordenActual = "Nombre";
+                        break;
+                    case "Fecha":
+                        ordenActual = "Fecha";
+                        break;
+                }
+                sortData();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        fillData(true);
+        registerForContextMenu(lista);
     }
 
     /** Se llama cuando la actividad se crea por primera vez y genera un menú de opciones */
@@ -138,6 +170,15 @@ public class Infos extends AppCompatActivity {
     }
 
     //PARA RELLENAR LA LISTA DE INFOS
+    public void sortData(){
+        InfoAdapter adapter = new InfoAdapter(ctx, infos);
+        if(ordenActual.equals("Nombre")){
+            adapter.notifyDataSetChanged(new InfoComparatorName());
+        }else{
+            adapter.notifyDataSetChanged(new InfoComparatorDate());
+        }
+        lista.setAdapter(adapter);
+    }
     public void fillData(Boolean delay){
         class ResponseHandler {
             public void handler(JSONArray list) {
@@ -170,9 +211,8 @@ public class Infos extends AppCompatActivity {
                     dialogError.show();
                 }
                 else{
-                    ArrayList<Info> infos = Info.fromJson(list);
-                    InfoAdapter adapter = new InfoAdapter(ctx, infos);
-                    lista.setAdapter(adapter);
+                    infos = Info.fromJson(list);
+                    sortData();
                     dialog.dismiss();
                 }
             }

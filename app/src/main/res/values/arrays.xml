@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="politicas_orden">
+        <item>"Nombre"</item>
+        <item>"Fecha"</item>
+    </string-array>
+</resources>
