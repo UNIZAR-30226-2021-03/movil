@@ -39,12 +39,12 @@ public class FileService {
                 new Response.Listener<String> () {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("SERVICIO",response);
-                        System.out.println(response);
+                        //Log.d("SERVICIO",response);
+                        //System.out.println(response);
                         JSONObject res = null;
                         try {
                             res = new JSONObject(response);
-                            System.out.println(res.toString());
+                            //System.out.println(res.toString());
                         } catch (JSONException e) {
                             callBack.onFinish(200, "");
                         }
@@ -60,7 +60,7 @@ public class FileService {
                     public void onErrorResponse(VolleyError error) {
                         if (error.networkResponse != null) {
                             callBack.onFinish(error.networkResponse.statusCode,"");
-                        }
+                        }else{callBack.onFinish(500,"");}
                     }
             }){
             @Override
@@ -87,9 +87,9 @@ public class FileService {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
-                    }
+                    }else {callBack.onFinish(500);}
                 }){
             @Override
             public Map<String, String> getHeaders() {

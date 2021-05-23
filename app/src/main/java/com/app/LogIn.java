@@ -20,16 +20,11 @@ import services.AuthService;
 
 public class LogIn extends AppCompatActivity {
 
-    private EditText mail;
-    private EditText password;
-    private EditText faCode;
-    private String statusCode;
-    private TextView errorConfirm;
-    private TextView errorCode;
+    private EditText mail,password,faCode;
+    private String statusCode,auxMail,auxPassword;
+    private TextView errorConfirm,errorCode;
     private PopupWindow popupWindow;
     private ProgressDialog dialog;
-    private String auxMail;
-    private String auxPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +53,7 @@ public class LogIn extends AppCompatActivity {
                     errorConfirm.setText("*El usuario no existe");
                     errorConfirm.setVisibility(View.VISIBLE);
                 } else if (response.equals("501")) {
-                    errorConfirm.setText("*No se puede enviar el email de verificación");
+                    errorConfirm.setText("*No se puede enviar el email de 2FA");
                     errorConfirm.setVisibility(View.VISIBLE);
                 } else if (response.equals("500")) {
                     errorConfirm.setText("*Server error");
@@ -97,13 +92,9 @@ public class LogIn extends AppCompatActivity {
         }
         errorConfirm.setVisibility(View.GONE);
 
-        //statusCode = LogInServices.logIn("cbellvis99@gmail.com","Borque1", this);
-
         auxMail = mail.getText().toString();
         auxPassword = password.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
-
-        //statusCode = LogInServices.logIn(auxMail, auxPassword,this);
 
         dialog.setMessage("Cargando");
         dialog.show();
@@ -114,9 +105,6 @@ public class LogIn extends AppCompatActivity {
                     responseHandler.handler(statusCode);
                 });
 
-        welcomeActivity("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MDg1M2I1MGRlOTc3NTFlNzZmN2JjODQiLCJpYXQiOjE2MjE3MDc0OTcsImV4cCI6MTYyMTcxMTA5N30.W0PLTgkifw7_N5ad3FYpTmVF9xb6ChICpQIPhG8gn7A", "Artur");
-
-        //responseHandler.handler("200");dialog.dismiss();
     }
 
     public void checkCode(View view){
@@ -130,7 +118,7 @@ public class LogIn extends AppCompatActivity {
                     errorCode.setText("*Error del servidor, intentelo más tarde");
                     errorCode.setVisibility(View.VISIBLE);
                 } else{
-                    System.out.println(response2fa);
+                    //System.out.println(response2fa);
                     popupWindow.dismiss();
                     //IR A PANTALLA WELCOME
                     welcomeActivity(response2fa,_nickname);
@@ -142,7 +130,7 @@ public class LogIn extends AppCompatActivity {
 
         dialog.setMessage("Cargando");
         dialog.show();
-        System.out.println(statusCode);
+       // System.out.println(statusCode);
         AuthService._2fa(statusCode, code,this, new AuthService._2FACallBack() {
             @Override
             public void onFinish(String accessToken, String nickname) {

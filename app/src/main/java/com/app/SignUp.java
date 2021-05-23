@@ -20,16 +20,10 @@ import services.AuthService;
 
 public class SignUp extends AppCompatActivity {
 
-    private EditText apodo;
-    private EditText mail;
-    private EditText password;
-    private EditText confirmPassword;
-    private TextView errorConfirm;
+    private EditText apodo,mail,password,confirmPassword;
+    private TextView errorConfirm,errorEmail;
     private ProgressDialog dialog;
-    private String auxApodo;
-    private String auxMail;
-    private String auxPassword;
-    private String auxConfirmPassword;
+    private String auxApodo,auxMail,auxPassword,auxConfirmPassword;
 
 
     @Override
@@ -43,7 +37,7 @@ public class SignUp extends AppCompatActivity {
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
         errorConfirm = findViewById(R.id.confirmIncorrectSign);
-
+        errorEmail = findViewById(R.id.incorrectMail);
     }
 
     public void onButtonShowPopupWindowClick(View view) {
@@ -102,7 +96,15 @@ public class SignUp extends AppCompatActivity {
         auxConfirmPassword = confirmPassword.getText().toString();
         ResponseHandler responseHandler = new ResponseHandler();
 
-        if(auxPassword.equals(auxConfirmPassword)){
+        if(!auxPassword.equals(auxConfirmPassword)){
+            errorConfirm.setText("*Las contraseñas no coinciden");
+            errorConfirm.setVisibility(View.VISIBLE);
+        }
+        if( !auxMail.matches("[a-z0-9.]+@[a-z0-9]+.[a-z]{3}")){
+            errorEmail.setText("*El email introducido no es correcto");
+            errorEmail.setVisibility(View.VISIBLE);
+        }
+        if (auxPassword.equals(auxConfirmPassword) && auxMail.matches("[a-z0-9.]+@[a-z0-9]+.[a-z]{3}")) {
             dialog.setMessage("Cargando");
             dialog.show();
             AuthService.SignUp(auxMail, auxApodo, auxPassword,this,
@@ -110,10 +112,6 @@ public class SignUp extends AppCompatActivity {
                         dialog.dismiss();
                         responseHandler.handler(statusCode);
                     });
-        }
-        else{
-            errorConfirm.setText("*Las contraseñas no coinciden");
-            errorConfirm.setVisibility(View.VISIBLE);
         }
 
     }

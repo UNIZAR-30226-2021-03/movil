@@ -36,17 +36,17 @@ public class CategoryService {
             //input your API parameters
             body.put("name",name);
         } catch (JSONException e) {
-            Log.d("JSONObject error", "Cannot create JSONObject body");
+            //Log.d("JSONObject error", "Cannot create JSONObject body");
         }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaCategory, body,
                 response -> {
-                    Log.d("Response", "Success Response: " + response.toString());
+                    //Log.d("Response", "Success Response: " + response.toString());
                     callBack.onFinish(200);
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                       // Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
                     }
                 }){
@@ -60,27 +60,18 @@ public class CategoryService {
     }
 
     public interface ListCategoryCallBack {
-        void onFinish(JSONArray list);
+        void onFinish(JSONArray list, Integer statusCode);
     }
     public static void ListCategories(String accessToken, Context context, final ListCategoryCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, Routes.rutaListCategories,null,
                 (JSONArray response) -> {
-                    Log.d("Response", "Success Response: " + response.toString());
-                    callBack.onFinish(response);
+                    //Log.d("Response", "Success Response: " + response.toString());
+                    callBack.onFinish(response,200);
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
-                        JSONObject res = new JSONObject();
-                        try {
-                            res.put("statuscode",String.valueOf(error.networkResponse.statusCode));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        JSONArray out = new JSONArray();
-                        out.put(res);
-                        callBack.onFinish(out);
+                        callBack.onFinish(null,error.networkResponse.statusCode);
                     }
                 }){
             @Override
@@ -106,7 +97,7 @@ public class CategoryService {
             body.put("name",name);
             body.put("category_id",category_id);
         } catch (JSONException e) {
-            Log.d("JSONObject error", "Cannot create JSONObject body");
+            //Log.d("JSONObject error", "Cannot create JSONObject body");
         }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, Routes.rutaUpdateCategory, body,
@@ -116,7 +107,7 @@ public class CategoryService {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
                     }
                 }){
@@ -145,7 +136,7 @@ public class CategoryService {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                       // Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
                     }
                 }){

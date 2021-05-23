@@ -26,36 +26,6 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.llave);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);*/
-
-
-        /*RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://keypax-api.sytes.net/public";
-
-        // Request a string response from the provided URL.
-        // TODO CHANGE TO JsonObjectRequest
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.println(Log.INFO,"a",response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-
-                    }
-                });
-
-        // Add the request to the RequestQueue.
-        queue.add(jsonObjectRequest);*/
-
-
     }
 
     public void signUpActivity(View view) {

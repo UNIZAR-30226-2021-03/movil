@@ -35,16 +35,16 @@ public class AuthService {
             body.put("nickname", nickname);
             body.put("password", password);
         } catch (JSONException e) {
-            Log.d("JSONObject error", "Cannot create JSONObject");
+            //Log.d("JSONObject error", "Cannot create JSONObject");
         }
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaSignUp, body,
                 response -> {
-                    Log.d("Response", "Success Response: " + response.toString());
+                    //Log.d("Response", "Success Response: " + response.toString());
                     callBack.onFinish(1);
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
                     }
                 });
@@ -64,21 +64,22 @@ public class AuthService {
             body.put("email",email);
             body.put("password",password);
         } catch (JSONException e) {
-            Log.d("JSONObject error", "Cannot create JSONObject");
+           // Log.d("JSONObject error", "Cannot create JSONObject");
         }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaLogIn, body,
                 response -> {
-                    Log.d("Response", "Success Response: " + response.toString());
+                   // Log.d("Response", "Success Response: " + response.toString());
                     try {
                         callBack.onFinish(response.getString("_2faToken"));
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        callBack.onFinish("500");
                     }
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish((String.valueOf(error.networkResponse.statusCode)));
                     }
                 });
@@ -98,9 +99,9 @@ public class AuthService {
             //input your API parameters
             body.put("_2faToken",token);
             body.put("code",code);
-            Log.d("BODY", body.toString());
+            //Log.d("BODY", body.toString());
         } catch (JSONException e) {
-            Log.d("JSONObject error", "Cannot create JSONObject");
+            //Log.d("JSONObject error", "Cannot create JSONObject");
         }
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Routes.rutaToken, body,
                 response -> {
@@ -109,11 +110,12 @@ public class AuthService {
                         callBack.onFinish(response.getString("accessToken"),response.getString("nickname"));
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        callBack.onFinish("500","");
                     }
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish((String.valueOf(error.networkResponse.statusCode)),"");
                     }
                 });

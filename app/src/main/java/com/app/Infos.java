@@ -38,15 +38,13 @@ import services.InfoService;
 
 public class Infos extends AppCompatActivity {
 
-    private String accesToken;
-    private String category_id;
-    private String category_name,ordenActual;
+    private String accesToken,category_id,category_name,ordenActual;
     private ProgressDialog dialog;
     private AlertDialog.Builder dialogError;
     private ListView lista;
     private Context ctx;
     private PopupWindow popupWindow;
-    private  Spinner orden;
+    private Spinner orden;
     private ArrayList<Info> infos;
 
     /**Atributos de la clase para distinguir opciones de menú*/
@@ -69,6 +67,7 @@ public class Infos extends AppCompatActivity {
         lista = findViewById(R.id.list_infos);
         ctx = this;
         ordenActual="Nombre";
+        infos=null;
 
         setTitle(category_name);
 
@@ -169,23 +168,25 @@ public class Infos extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    //PARA RELLENAR LA LISTA DE INFOS
+    //PARA Ordenar la lista DE INFOS
     public void sortData(){
-        InfoAdapter adapter = new InfoAdapter(ctx, infos);
-        if(ordenActual.equals("Nombre")){
-            adapter.notifyDataSetChanged(new InfoComparatorName());
-        }else{
-            adapter.notifyDataSetChanged(new InfoComparatorDate());
+        if(infos != null) {
+            InfoAdapter adapter = new InfoAdapter(ctx, infos);
+            if (ordenActual.equals("Nombre")) {
+                adapter.notifyDataSetChanged(new InfoComparatorName());
+            } else {
+                adapter.notifyDataSetChanged(new InfoComparatorDate());
+            }
+            lista.setAdapter(adapter);
         }
-        lista.setAdapter(adapter);
     }
     public void fillData(Boolean delay){
         class ResponseHandler {
-            public void handler(JSONArray list) {
-                if (list.equals("403")) {
+            public void handler(JSONArray list,Integer statusCode) {
+                if (statusCode ==403 || statusCode ==500 ) {
                     dialog.dismiss();
                     dialogError.setTitle("Aviso");
-                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -195,16 +196,14 @@ public class Infos extends AppCompatActivity {
                     });
                     dialogError.show();
                 }
-                else if (list.equals("401")) {
+                else if (statusCode==401) {
                     dialog.dismiss();
-
                     dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
                             logInActivity();
                         }
                     });
@@ -223,20 +222,13 @@ public class Infos extends AppCompatActivity {
             dialog.setMessage("Cargando");
             dialog.show();
         }
-        //QUitar?
-        SystemClock.sleep(300);
         InfoService.ListInfos(accesToken,category_id,this,
-                list -> {
-                    responseHandler.handler(list);
+                (list,statusCode) -> {
+                    responseHandler.handler(list,statusCode);
                 });
     }
 
     public void addInfo(View view){
-        //TODO: Abrir Actividad de rellenar campos
-        // pasandole el accessToken y la category_id a la que pertenece.
-
-        //TODO: Abrá que hacer el módulo de generer contraseñas aleatorias
-
         Intent i = new Intent(this,EditInfo.class);
         i.putExtra("accessToken",accesToken);
         i.putExtra("category_id",category_id);
@@ -271,20 +263,17 @@ public class Infos extends AppCompatActivity {
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                            logInActivity();
-                        }
+                        public void onClick(DialogInterface dialog, int which) {finish();}
                     });
                     dialogError.show();
-                } else if (statusCode==403) {
+                } else if (statusCode==403 || statusCode == 500) {
                     dialog.dismiss();
                     dialogError.setTitle("Aviso");
-                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which){
                             finish();
                         }
                     });
@@ -298,7 +287,6 @@ public class Infos extends AppCompatActivity {
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
                             logInActivity();
                         }
                     });

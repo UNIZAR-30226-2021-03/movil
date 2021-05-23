@@ -21,7 +21,7 @@ import java.util.Map;
 public class InfoService {
 
     public interface ListInfosCallBack {
-        void onFinish(JSONArray list);
+        void onFinish(JSONArray list,Integer statusCode);
     }
     public static void ListInfos(String accessToken,String category_id, Context context, final ListInfosCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -29,24 +29,15 @@ public class InfoService {
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url,null,
                 (JSONArray response) -> {
-                    Log.d("Response", "Success Response: " + response.toString());
-                    callBack.onFinish(response);
+                    //Log.d("Response", "Success Response: " + response.toString());
+                    callBack.onFinish(response,200);
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (error.networkResponse != null) {
-                            Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
-                            JSONObject res = new JSONObject();
-                            try {
-                                res.put("statuscode", String.valueOf(error.networkResponse.statusCode));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            JSONArray out = new JSONArray();
-                            out.put(res);
-                            callBack.onFinish(out);
-                        }
+                            callBack.onFinish(null,error.networkResponse.statusCode);
+                        }else{callBack.onFinish(null,500);}
                     }
                 }){
             @Override
@@ -76,7 +67,7 @@ public class InfoService {
                     if (error.networkResponse != null) {
                         Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
-                    }
+                    }else{callBack.onFinish(500);}
                 }){
             @Override
             public Map<String, String> getHeaders() {
@@ -95,7 +86,7 @@ public class InfoService {
     public static void DeleteInfo(String accessToken, String category_id, String info_id, Context context, final DeleteInfoCallBack callBack){
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = Routes.rutaDeleteInfo + info_id + "&category_id=" + category_id;
-        System.out.println(url);
+       // System.out.println(url);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {
@@ -104,9 +95,9 @@ public class InfoService {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                       // Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
-                    }
+                    }else{callBack.onFinish(500);}
                 }){
             @Override
             public Map<String, String> getHeaders() {
@@ -131,9 +122,9 @@ public class InfoService {
                 },
                 error -> {
                     if (error.networkResponse != null) {
-                        Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
+                        //Log.d("Error", "Error Response code: " + error.networkResponse.statusCode);
                         callBack.onFinish(error.networkResponse.statusCode);
-                    }
+                    }else{callBack.onFinish(500);}
                 }){
             @Override
             public Map<String, String> getHeaders() {

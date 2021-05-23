@@ -33,15 +33,13 @@ import adapters.CategoryAdapter;
 import services.CategoryService;
 
 public class Welcome extends AppCompatActivity {
-    private static String accesTokenWelcome;
-    private static String nickname;
+    private static String accesTokenWelcome,nickname,working_id;
     private static PopupWindow popupWindow;
     private static EditText newCategoryName;
     private static ProgressDialog dialog;
     private AlertDialog.Builder dialogError;
     private static TextView errorAdd;
     private static ListView lista;
-    private static String working_id;
     private static Context ctx;
     private static Intent i;
 
@@ -126,13 +124,41 @@ public class Welcome extends AppCompatActivity {
     //PARA RELLENAR LA LISTA DE CATÉGORÍAS
     public void fillData(Boolean delay){
         class ResponseHandler {
-            public void handler(JSONArray list) {
-                // TODO: Comprobar fallos!! Códigos de ERROOORR
-                ArrayList<Category> categorias = Category.fromJson(list);
-                CategoryAdapter adapter = new CategoryAdapter(ctx, categorias);
-                lista.setAdapter(adapter);
-                dialog.dismiss();
-
+            public void handler(JSONArray list,Integer statusCode) {
+                if (statusCode==403 || statusCode==500) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            popupWindow.dismiss();
+                            logInActivity();
+                        }
+                    });
+                    dialogError.show();
+                }
+                else if (statusCode == 401){
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            popupWindow.dismiss();
+                            logInActivity();
+                        }
+                    });
+                    dialogError.show();
+                }
+                else if (statusCode==200){
+                    ArrayList<Category> categorias = Category.fromJson(list);
+                    CategoryAdapter adapter = new CategoryAdapter(ctx, categorias);
+                    lista.setAdapter(adapter);
+                    dialog.dismiss();
+                }
             }
         }
         ResponseHandler responseHandler = new ResponseHandler();
@@ -140,11 +166,9 @@ public class Welcome extends AppCompatActivity {
             dialog.setMessage("Cargando");
             dialog.show();
         }
-        //QUitar?
-        SystemClock.sleep(300);
         CategoryService.ListCategories(accesTokenWelcome,this,
-                list -> {
-                    responseHandler.handler(list);
+                (list,statusCode) -> {
+                    responseHandler.handler(list,statusCode);
                 });
     }
 
@@ -314,13 +338,32 @@ public class Welcome extends AppCompatActivity {
         class ResponseHandler {
             public void handler(Integer statusCode) {
                 if (statusCode==453) {
-                    errorAdd.setText("*No se ha podido actualizar la categoría");
-                    errorAdd.setVisibility(View.VISIBLE);
-                } else if (statusCode==403) {
-                    errorAdd.setText("*Ha ocurrido un fallo");
-                    errorAdd.setVisibility(View.VISIBLE);
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("No se ha podido borrar la categoría");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode==403 || statusCode==500) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialogError.show();
                 }
                 else if (statusCode==401) {
+                    dialog.dismiss();
                     dialogError.setTitle("Aviso");
                     dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
                     dialogError.setCancelable(false);
@@ -359,7 +402,6 @@ public class Welcome extends AppCompatActivity {
     }
 
     public void logInActivity() {
-        //TODO : CREO QUE NO VA....
         Intent i = new Intent(this,LogIn.class);
         startActivity(i);
         finish();

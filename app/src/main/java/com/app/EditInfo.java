@@ -77,7 +77,7 @@ public class EditInfo extends AppCompatActivity {
     private ProgressDialog dialog;
     private AlertDialog.Builder dialogError;
     private EditText name,username,password,url,description,tamanyo,specialCharacters;
-    private TextView errorName,errorUser,errorPassword,errorURL, entropiaText;
+    private TextView errorName,errorUser,errorPassword,errorURL,entropiaText,fecha;
     private CheckBox upper,lower,numbers;
     private Button downloadFile;
     private Intent i;
@@ -100,6 +100,7 @@ public class EditInfo extends AppCompatActivity {
         url =  findViewById(R.id.url);
         description =  findViewById(R.id.description);
         downloadFile   = findViewById(R.id.downloadFile);
+        fecha = findViewById(R.id.fecha);
         errorName = findViewById(R.id.nameError);
         errorUser = findViewById(R.id.userError);
         errorPassword = findViewById(R.id.passwordError);
@@ -139,11 +140,12 @@ public class EditInfo extends AppCompatActivity {
         String aux = i.getStringExtra("file_name");
         file_id=i.getStringExtra("file_id");
 
+        String[] parts1 = i.getStringExtra("date").split("T");
+        fecha.setText("Fecha: "+parts1[0]);
+
         if(!aux.equals("")){
             downloadFile.setText(aux);
         }
-
-        //date.setText(i.getStringExtra("date"))
     }
 
     public void saveInfo(View view) {
@@ -160,20 +162,20 @@ public class EditInfo extends AppCompatActivity {
             body.put("name",_name);
             body.put("username",_username);
             body.put("password",_password);
-            body.put("url",_url);
+            if(!_url.equals("")) {body.put("url",_url);}
             if(!_description.equals("")) {body.put("description",_description);}
         }catch(JSONException e){}
 
         class ResponseHandlerAdd {
             public void handler(Integer statusCode) {
-                if (statusCode==403) {
+                if (statusCode==403 || statusCode ==500) {
                     dialog.dismiss();
                     dialogError.setTitle("Aviso");
-                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which){
                             finish();
                         }
                     });
@@ -187,7 +189,6 @@ public class EditInfo extends AppCompatActivity {
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
                             logInActivity();
                         }
                     });
@@ -205,21 +206,22 @@ public class EditInfo extends AppCompatActivity {
                         }
                     });
                     dialogError.show();
+                }else {
+                    dialog.dismiss();
+                    finish();
                 }
-                dialog.dismiss();
-                finish();
             }
         }
         class ResponseHandlerUpdate {
             public void handler(Integer statusCode) {
-                if (statusCode==403) {
+                if (statusCode==403 || statusCode==500) {
                     dialog.dismiss();
                     dialogError.setTitle("Aviso");
-                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which){
                             finish();
                         }
                     });
@@ -233,7 +235,6 @@ public class EditInfo extends AppCompatActivity {
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            finish();
                             logInActivity();
                         }
                     });
@@ -251,9 +252,10 @@ public class EditInfo extends AppCompatActivity {
                         }
                     });
                     dialogError.show();
+                }else{
+                    dialog.dismiss();
+                    finish();
                 }
-                dialog.dismiss();
-                finish();
             }
         }
         if(_name.equals("")){
@@ -268,12 +270,11 @@ public class EditInfo extends AppCompatActivity {
             //Contraseña vacio
             errorPassword.setVisibility(View.VISIBLE);
         }
-        else if(!android.util.Patterns.WEB_URL.matcher(_url).matches()){
+        else if(!_url.equals("") && !android.util.Patterns.WEB_URL.matcher(_url).matches()){
             errorURL.setVisibility(View.VISIBLE);
         }
         else{
-
-            //Los campos no son vacios
+            //Los campos son correctos
             if(is_new) {
                 ResponseHandlerAdd responseHandleradd = new ResponseHandlerAdd();
 
@@ -414,7 +415,7 @@ public class EditInfo extends AppCompatActivity {
         //Llamamos a super para informar a la clase padre que la llamada a la actividad a finalizado
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
-            Uri filepath=data.getData(); //TODO: sacar el filename
+            Uri filepath=data.getData();
             fileName=filepath.getLastPathSegment();
             commitUpload(getFileDataFromUri(this, filepath));
         }
@@ -424,25 +425,94 @@ public class EditInfo extends AppCompatActivity {
         Context ctx=this;
         class ResponseHandlerUpload {
             public void handler(Integer statusCode,String _file_id) {
-                //TODO: ERRORES
-                file_id=_file_id;
-                //downloadFile.setText(fileName+".jpg");
-                if(statusCode==200){
-                    downloadFile.setText(_file_id);
-                }else{
-                    downloadFile.setText("Error al subir el archivo");
-                }
-                dialog.dismiss();
+                 if (statusCode == 403 || statusCode == 500) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 401) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            logInActivity();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 472) {
+                     dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("No se ha podido subir el nuevo archivo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                 }else if(statusCode==200){
+                     file_id = _file_id;
+                     downloadFile.setText(fileName);
+                     dialog.dismiss();
+                 }
             }
         }
         class ResponseHandlerDelete {
             public void handler(Integer statusCode) {
-                //TODO: Hace falta revisar errores?
-                ResponseHandlerUpload responseHandlerupdate = new ResponseHandlerUpload();
-                dialog.setMessage("Cargando");
-                dialog.show();
-                FileService.UploadFile(accessToken, category_id,info_id,data,fileName, ctx,
-                        (errorCode, _file_id) -> responseHandlerupdate.handler(errorCode,_file_id));
+                if (statusCode == 403 || statusCode == 500) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 401) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            logInActivity();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 473) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("No se ha podido subir el nuevo archivo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                } else{
+                    ResponseHandlerUpload responseHandlerupdate = new ResponseHandlerUpload();
+                    dialog.setMessage("Cargando");
+                    dialog.show();
+                    FileService.UploadFile(accessToken, category_id, info_id, data, fileName, ctx,
+                            (errorCode, _file_id) -> responseHandlerupdate.handler(errorCode, _file_id));
+                }
             }
         }
         if(!file_id.equals("")) {
@@ -478,12 +548,48 @@ public class EditInfo extends AppCompatActivity {
     public void commitDeleteFile(Boolean loading){
         class ResponseHandlerUpdate {
             public void handler(Integer statusCode) {
-                //TODO: ERRORES
-                if(loading) {
+                if (statusCode == 403 || statusCode == 500) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 401) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("Su sesión ha expirado, vuelva a iniciar sesión");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            logInActivity();
+                        }
+                    });
+                    dialogError.show();
+                } else if (statusCode == 473) {
+                    dialog.dismiss();
+                    dialogError.setTitle("Aviso");
+                    dialogError.setMessage("No se ha podido subir el nuevo archivo");
+                    dialogError.setCancelable(false);
+                    dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+                    dialogError.show();
+                }else if (statusCode==200){
                     downloadFile.setText("NO HAY ARCHIVOS SUBIDOS");
                     file_id="";
-                    System.out.println("FIN DELETE"+file_id);
-                    dialog.dismiss();
+                    if(loading) {
+                        dialog.dismiss();
+                    }
                 }
             }
         }
@@ -500,13 +606,12 @@ public class EditInfo extends AppCompatActivity {
     }
 
     public void downloadFile(View v) {
-        System.out.println("COMIENZA DOWNLOAD"+file_id);
         class ResponseHandler {
             public void handler(Integer statusCode) {
                 if (statusCode==403) {
                     dialog.dismiss();
                     dialogError.setTitle("Aviso");
-                    dialogError.setMessage("Ha ocurrido un fallo");
+                    dialogError.setMessage("Ha ocurrido un fallo inesperado, intentelo más tarde");
                     dialogError.setCancelable(false);
                     dialogError.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
@@ -532,7 +637,6 @@ public class EditInfo extends AppCompatActivity {
                 }else{
                     commitDownload();
                 }
-                System.out.println("FIN DOWNLOAD"+file_id);
             }
         }
         if(!file_id.equals("")) {
@@ -570,29 +674,23 @@ public class EditInfo extends AppCompatActivity {
         entropiaText.setText("Entropía: "+String.valueOf((int)entropy));
         //Valoración entropía
         if(entropy<28){
-           // entropiaText.setText("Muy débil");
-
             entropiaText.setTextColor(getResources().getColor(R.color.error));
             entropiaText.setVisibility(View.VISIBLE);
         }
         else if(entropy>=28 && entropy<36){
-           // entropiaText.setText("Débil");
             entropiaText.setTextColor(getResources().getColor(R.color.debil));
             entropiaText.setVisibility(View.VISIBLE);
         }
         else if(entropy>=36 && entropy<60){
-           // entropiaText.setText("Razonable");
             entropiaText.setTextColor(getResources().getColor(R.color.razonable));
             entropiaText.setVisibility(View.VISIBLE);
         }
         else if(entropy>=60 && entropy<128){
-            //entropiaText.setText("Segura");
-            entropiaText.setTextColor(getResources().getColor(R.color.segura));
+            entropiaText.setTextColor(getResources().getColor(R.color.muySegura));
             entropiaText.setVisibility(View.VISIBLE);
         }
         else if(entropy>=128){
-            //entropiaText.setText("Muy segura");
-            entropiaText.setTextColor(getResources().getColor(R.color.muySegura));
+            entropiaText.setTextColor(getResources().getColor(R.color.segura));
             entropiaText.setVisibility(View.VISIBLE);
         }
 
